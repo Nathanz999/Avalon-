@@ -545,7 +545,7 @@
             modalMessage.innerHTML = message; // Use innerHTML to allow for strong tags
             centralModal.classList.add('active');
             
-            // Set button to default action and text (will be overridden by endGame if called later)
+            // Set button to default action and text
             modalDismissBtn.textContent = 'ดำเนินการต่อ';
             modalDismissBtn.onclick = defaultModalDismissHandler;
 
@@ -554,7 +554,7 @@
             // In non-endgame scenario, only auto dismiss if critical, otherwise rely on user click
             if (isCritical && !title.includes('จบเกม')) {
                  modalDismissBtn.style.display = 'inline-block';
-                 setTimeout(() => centralModal.classList.remove('active'), 5000);
+                 // NOTE: Removed setTimeout here to ensure only a single logic controls dismissal.
             } else {
                  modalDismissBtn.style.display = 'inline-block';
             }
@@ -967,7 +967,7 @@
             if(targetPlayer.role===rolesDef.SEER){ endGame('evil_assassin'); } else { endGame('good_assassin_fail'); }
         }
 
-        // --- end game (MODIFIED) ---
+        // --- end game (MODIFIED for persistent display) ---
         function endGame(mode){
             let text='';
             let winnerFaction = '';
@@ -1003,12 +1003,12 @@
                                           ${rosterHtml}
                                       </div>`;
             
-            // Modify the button to be a reset button (persistent until clicked)
+            // *CRITICAL CHANGE: Modify the button to be a persistent reset button*
             modalDismissBtn.textContent = '★ เริ่มเกมใหม่ ★';
             modalDismissBtn.style.display = 'inline-block';
             modalDismissBtn.onclick = () => { 
                 location.reload(); 
-            }; // Override the handler to reload page
+            }; // Override the handler to reload page permanently
             
             centralModal.classList.add('active'); // Show the modal persistently
         }
