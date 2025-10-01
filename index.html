@@ -3,26 +3,30 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
-    <title>Avalon — Light Mode & Modal Flow (Prompt Font)</title>
+    <title>Avalon: Theme of Light</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
     <style>
         /* ---------------------------------- */
-        /* 1. Base & Theme - Light Mode */
+        /* 1. Base & Theme - LIGHT MODE */
         /* ---------------------------------- */
         :root {
-            --bg: #f4f7fa; /* Light Grey/Off-White Background */
-            --card: #ffffff; /* Pure White Card */
+            --bg: #f7f7f7; /* Light Background */
+            --card: #ffffff; /* White Card Background */
             --text-dark: #1f2937; /* Dark Text */
-            --accent-blue: #3b82f6; /* Electric Blue Accent */
-            --accent-blue-light: #60a5fa;
+            --text-light: #ffffff; /* Light Text (for buttons/accents) */
+            --accent-blue: #2563eb; /* Strong Blue Accent */
+            --accent-blue-light: #3b82f6;
             --muted: #6b7280; /* Muted Grey */
-            --success: #10b981; /* Emerald Green */
-            --fail: #ef4444; /* Standard Red */
-            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --font-main: 'Prompt', sans-serif; /* New Clean Font */
+            --success: #10b981; /* Emerald Green (Good) */
+            --fail: #ef4444; /* Standard Red (Evil) */
+            --border: #e5e7eb; /* Light Border */
+            --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.1); /* Softer Shadow */
+            --font-main: 'Prompt', sans-serif; 
         }
         
-        *{box-sizing:border-box;font-family: var(--font-main);} /* Applied new font */
+        *{box-sizing:border-box;font-family: var(--font-main);} 
         
         html,body{
             height:100%;
@@ -34,34 +38,33 @@
         }
         .wrap{max-width:1200px;margin:24px auto;padding:18px}
         header{display:flex;align-items:center;gap:16px; margin-bottom: 24px;}
-        header h1{margin:0;font-size:32px; font-weight: 900; color: var(--accent-blue); text-shadow: none;} /* Removed text-shadow */
+        header h1{margin:0;font-size:36px; font-weight: 900; color: var(--accent-blue); text-shadow: 0 0 5px rgba(37, 99, 235, 0.3);} 
         
-        /* Card Style - White background, clean shadow */
+        /* Card Style - Light background, clean shadow */
         .card{
             background: var(--card);
             padding:24px;
-            border-radius:10px;
+            border-radius:12px;
             box-shadow:var(--shadow-card);
-            border: 1px solid #e5e7eb; 
+            border: 1px solid var(--border); 
             transition: all 0.3s;
         }
         
         .controls{display:flex;gap:30px;flex-wrap:wrap;margin-top:12px}
         .panel{flex:1;min-width:300px}
-        /* Labels are dark text with clear font weight */
-        label{display:block;font-size:14px;color:var(--text-dark);margin-bottom:6px; font-weight: 600; text-transform: uppercase;}
+
+        label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px; font-weight: 600; text-transform: uppercase;}
         
-        /* Inputs/Selects - Clean white background, dark border */
         input[type=text], select{
             width:100%;
             padding:12px;
             border-radius:6px;
-            border:1px solid #d1d5db;
-            background:var(--card);
+            border:1px solid var(--border);
+            background:var(--card); 
             color:var(--text-dark);
             transition: border-color 0.2s;
         }
-        input[type=text]:focus, select:focus{border-color:var(--accent-blue); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);}
+        input[type=text]:focus, select:focus{border-color:var(--accent-blue); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);}
         
         .row{display:flex;gap:8px}
         
@@ -71,17 +74,17 @@
             border:none;
             padding:12px 20px;
             border-radius:6px;
-            color:white;
-            font-weight:600; /* Adjusted font weight for better Prompt display */
+            color:var(--text-light);
+            font-weight:700; 
             cursor:pointer;
             transition: all 0.2s ease-in-out;
-            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
             min-width: 120px;
             text-align: center;
             text-transform: uppercase;
         }
-        .btn:hover {background: var(--accent-blue-light); transform: translateY(-1px); box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);}
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; background: #e5e7eb; color: var(--muted);}
+        .btn:hover {background: var(--accent-blue-light); transform: translateY(-1px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);}
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; background: #cccccc; color: var(--muted);}
         
         .btn.ghost{
             background:transparent;
@@ -89,68 +92,53 @@
             color: var(--muted);
             box-shadow: none;
         }
-        .btn.ghost:hover {background: #e5e7eb; transform: none; box-shadow: none; color: var(--text-dark); border-color: var(--text-dark);}
+        .btn.ghost:hover {background: #f0f0f0; transform: none; box-shadow: none; color: var(--text-dark); border-color: var(--text-dark);}
         
         /* Player Input List */
         .players-list{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
         .player-input{flex-basis: calc(50% - 5px);}
-
-        /* Status Card - Game Info */
+        
+        /* Game Info Card (Mission Status) */
         .status-card{
           margin-top:18px;
           padding:24px;
-          border-radius:10px;
-          background:#f0f4f7; 
+          border-radius:12px;
+          background:#ebf8ff; /* Light Blueish Background */
           border: 1px solid var(--accent-blue-light);
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          box-shadow: 0 0 10px rgba(37, 99, 235, 0.1);
           text-align: center;
         }
-        .status-text{font-size: 22px; font-weight: 700; color: var(--accent-blue);}
-        .status-text:before { content: "• "; color: var(--accent-blue-light); }
+        .status-text{font-size: 24px; font-weight: 800; color: var(--text-dark);}
+        .status-text:before { content: "\f0a1 "; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: var(--accent-blue); margin-right: 8px;}
 
 
         /* Role Card - Theatrical Reveal */
-        /* Role Card inside Modal */
         .role-modal-content{
-            min-height:280px;
+            min-height:350px;
             display:flex;
             flex-direction:column;
             align-items:center;
             justify-content:center;
-            gap:12px;
-            border-radius:10px;
-            padding:40px 24px; /* Reduced padding slightly */
-            background: #fcfcfc;
-            border: 3px solid;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            min-width: 450px; /* Ensure it looks like a modal */
-        }
-
-        /* Generic Modal (used for central game info) */
-        .modal-content{
+            gap:15px;
+            border-radius:15px;
+            padding:50px 30px; 
             background: var(--card);
-            padding: 50px;
-            border-radius: 15px;
-            text-align: center;
-            transform: scale(0.8);
-            transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
-            border: 5px solid;
-            min-width: 450px;
+            border: 4px solid;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            min-width: 500px; 
+            color: var(--text-dark);
         }
-
-
-        .role-name{font-size:48px;font-weight:900;text-transform: uppercase; margin-bottom: 5px;}
-        .role-title{font-size:16px;color:var(--muted);font-weight: 600;}
+        .role-name{font-size:55px;font-weight:900;text-transform: uppercase; margin-bottom: 5px; text-shadow: 0 0 5px rgba(0,0,0,0.1);}
+        .role-title{font-size:18px;color:var(--muted);font-weight: 600;}
 
         /* Role Color Classes */
-        .role-good { border-color: var(--success); color: var(--success); text-shadow: none; }
-        .role-evil { border-color: var(--fail); color: var(--fail); text-shadow: none; }
+        .role-good { border-color: var(--success); color: var(--success); }
+        .role-evil { border-color: var(--fail); color: var(--fail); }
 
-        .role-desc{font-size:15px;color:var(--text-dark);max-width:420px;text-align:center; margin-top: 10px;}
-        .role-desc .secret-info { margin-top: 15px; padding: 10px; border-radius: 6px; font-weight: 600; }
-        .role-desc .secret-info.good { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-        .role-desc .secret-info.evil { background: rgba(239, 68, 68, 0.15); color: var(--fail); }
+        .role-desc{font-size:16px;color:var(--text-dark);max-width:450px;text-align:center; margin-top: 15px;}
+        .role-desc .secret-info { margin-top: 20px; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 15px; }
+        .role-desc .secret-info.good { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid var(--success); }
+        .role-desc .secret-info.evil { background: rgba(239, 68, 68, 0.1); color: var(--fail); border: 1px solid var(--fail); }
 
         /* ---------------------------------- */
         /* 2. Game area & Grids */
@@ -161,73 +149,78 @@
         /* Player Pill Style - Clean Pill */
         .pill{
             padding:12px 18px;
-            border-radius:4px;
-            background:#f0f4f7;
-            border:1px solid #d1d5db;
+            border-radius:6px;
+            background:#f0f0f0; /* Light grey for pill */
+            border:1px solid var(--border);
             color: var(--text-dark);
             min-width:120px;
             transition: all 0.2s;
             font-weight: 500;
             cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .pill:hover { background: #e5e7eb; }
+        .pill:hover { background: #e0e0e0; }
         
         /* Leader (Blue Pill) */
         .leader{
             background: var(--accent-blue);
-            color: white;
-            font-weight: 700;
-            border: 2px solid var(--text-dark);
-            box-shadow:0 0 10px rgba(59, 130, 246, 0.5);
+            color: var(--text-light); /* Ensure text stands out on bright blue */
+            font-weight: 800;
+            border: 2px solid var(--accent-blue-light);
+            box-shadow:0 0 10px rgba(37, 99, 235, 0.4);
         }
         .selected{
-            outline:4px solid var(--fail); 
-            box-shadow: 0 0 10px var(--fail);
-            background: rgba(239, 68, 68, 0.1);
+            outline:4px solid var(--success); /* Use success border for proposal */
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.1); 
+            border-color: var(--success);
         }
         
         /* Log Style - History Scroll */
         .log{
             margin-top:15px;
-            background:#eef2f6;
+            background:#ffffff; /* White background for log */
             padding:12px;
-            border-radius:6px;
+            border-radius:8px;
             max-height:300px;
             overflow-y:auto;
-            border: 1px solid #d1d5db;
+            border: 1px solid var(--border);
             font-size: 13px;
             word-break: break-word;
             color: var(--muted);
         }
-        .log div { margin-bottom: 4px; }
+        .log div { margin-bottom: 4px; border-bottom: 1px dotted #e0e0e0; padding-bottom: 3px;}
+        .log div:last-child { border-bottom: none; }
 
-        /* Mission Tracker */
+        /* Mission Tracker - New Design */
         .mission-tracker {
             display: flex;
             justify-content: space-around;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 25px;
             padding-top: 15px;
-            border-top: 1px solid #d1d5db;
+            border-top: 1px solid var(--border);
         }
         .mission-slot {
             text-align: center;
             opacity: 0.7;
-            transition: opacity 0.3s;
+            transition: all 0.3s;
             font-size: 14px;
             color: var(--muted);
             font-weight: 500;
+            cursor: default;
         }
         .mission-slot span {
             display: block;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             margin: 8px auto 0;
-            background: #eef2f6;
+            background: #d1d5db; /* Lighter grey for empty slot */
             border: 3px solid var(--muted);
-            box-shadow: inset 0 0 3px rgba(0,0,0,0.1);
+            line-height: 30px;
+            font-size: 18px;
+            color: var(--text-dark);
         }
         .mission-slot.done {
             opacity: 1;
@@ -235,12 +228,24 @@
         .mission-slot.success span {
             background: var(--success);
             border-color: var(--success);
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+            color: var(--text-light);
         }
         .mission-slot.fail span {
             background: var(--fail);
             border-color: var(--fail);
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+            color: var(--text-light);
+        }
+        .mission-slot.current span {
+            border-color: var(--accent-blue);
+            animation: pulse-border 1.5s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
         }
 
         /* ---------------------------------- */
@@ -252,7 +257,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.75); 
+            background: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -265,13 +270,24 @@
             opacity: 1;
             pointer-events: auto;
         }
-        /* Generic Modal Styles (for game messages, voting, etc) */
+        .modal-content{
+            background: var(--card);
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 5px solid;
+            min-width: 500px;
+        }
         .modal-overlay.active .modal-content {
             transform: scale(1);
         }
+        .modal-icon { font-size: 60px; margin-bottom: 20px; }
         .modal-title {
-            font-size: 40px;
-            font-weight: 800; /* Adjusted font weight for Prompt */
+            font-size: 44px;
+            font-weight: 900; 
             margin-bottom: 15px;
             text-transform: uppercase;
             color: var(--text-dark);
@@ -283,14 +299,14 @@
         }
         /* Modal Colors (High Impact) */
         .modal-content.success { border-color: var(--success); }
-        .modal-content.success .modal-title { color: var(--success); text-shadow: none; }
+        .modal-content.success .modal-title, .modal-content.success .modal-icon { color: var(--success); }
         .modal-content.fail { border-color: var(--fail); }
-        .modal-content.fail .modal-title { color: var(--fail); text-shadow: none; }
+        .modal-content.fail .modal-title, .modal-content.fail .modal-icon { color: var(--fail); }
         .modal-content.info { border-color: var(--accent-blue); }
-        .modal-content.info .modal-title { color: var(--accent-blue); }
+        .modal-content.info .modal-title, .modal-content.info .modal-icon { color: var(--accent-blue); }
         .modal-content.player-turn { border-color: var(--accent-blue-light); }
-        .modal-content.player-turn .modal-title { color: var(--text-dark); }
-        .modal-content.player-turn .modal-message { color: var(--accent-blue); font-size: 22px; font-weight: 600; }
+        .modal-content.player-turn .modal-icon { color: var(--accent-blue); }
+        .modal-content.player-turn .modal-message { color: var(--accent-blue); font-size: 22px; font-weight: 700; }
 
 
         /* Mobile Tweaks */
@@ -302,181 +318,190 @@
             .modal-content, .role-modal-content { min-width: 90%; padding: 30px; }
             .modal-title { font-size: 30px; }
         }
+        
+        /* VIEWS - Hiding specific content areas */
+        .view { display: none; }
+        .view.active { display: block; }
     </style>
 </head>
 <body>
     <div id="central-modal" class="modal-overlay">
         <div id="modal-container" class="modal-content">
+            <div id="modal-icon" class="modal-icon"><i class="fas fa-info-circle"></i></div>
             <div id="modal-title" class="modal-title"></div>
             <div id="modal-message" class="modal-message"></div>
-            <button class="btn" id="modal-dismiss" style="margin-top:20px; min-width: 180px;">ดำเนินการต่อ</button>
+            <button class="btn" id="modal-dismiss" style="margin-top:25px; min-width: 200px;">ดำเนินการต่อ</button>
         </div>
     </div>
 
     <div id="role-reveal-modal" class="modal-overlay">
         <div id="reveal-content" class="role-modal-content">
-            <div class="role-title">บทบาทของคุณคือ</div>
+            <div class="role-title">บทบาทแห่งชะตาของคุณ</div>
             <div id="revealRoleModal" class="role-name"></div>
-            <div id="revealNameModal" style="font-weight:700; font-size: 24px; margin-bottom: 10px; color: var(--text-dark);"></div>
+            <div id="revealNameModal" style="font-weight:800; font-size: 28px; margin-bottom: 10px; color: var(--text-dark);"></div>
             <div class="role-desc" id="revealDescModal"></div>
-            <button class="btn" id="role-modal-next" style="margin-top:20px; min-width: 250px;">ซ่อนบทบาท & ส่งเครื่องต่อ</button>
+            <button class="btn" id="role-modal-next" style="margin-top:30px; min-width: 280px;"><i class="fas fa-hand-paper"></i> ซ่อนบทบาท & ส่งเครื่องต่อ</button>
         </div>
     </div>
     
     <div class="wrap">
         <header>
+            <i class="fas fa-chess-knight" style="font-size: 40px; color: var(--text-dark); text-shadow: 0 0 5px rgba(0, 0, 0, 0.1);"></i>
             <h1>AVALON</h1>
-            <div>
-                <div style="font-size:20px;font-weight: 700; color: var(--text-dark);">คนเมาห้ามเล่น</div>
-                <div style="color:var(--muted);font-size:14px">บอร์ดเกมสร้างโดย 9thanz</div>
-            </div>
         </header>
+        
+        <div id="setupView" class="view active">
+             <div class="controls">
+                <div class="card panel">
+                    <h2 style="color:var(--text-dark)">1. การตั้งค่าเกม</h2>
+                    <label>จำนวนผู้เล่น</label>
+                    <div class="row">
+                        <select id="playerCount">
+                            <option value="5">5 Players</option>
+                            <option value="6">6 Players</option>
+                            <option value="7">7 Players</option>
+                            <option value="8">8 Players</option>
+                            <option value="9">9 Players</option>
+                            <option value="10">10 Players</option>
+                        </select>
+                        <button class="btn ghost" id="setNames">สร้างชื่อ</button>
+                    </div>
 
-        <div class="controls">
-            <div class="card panel">
-                <label>จำนวนผู้เล่น</label>
-                <div class="row">
-                    <select id="playerCount">
-                        <option value="5">5 Players</option>
-                        <option value="6">6 Players</option>
-                        <option value="7">7 Players</option>
-                        <option value="8">8 Players</option>
-                        <option value="9">9 Players</option>
-                        <option value="10">10 Players</option>
-                    </select>
-                    <button class="btn ghost" id="setNames">สร้างชื่อ</button>
+                    <label style="margin-top:20px">ชื่อผู้เล่น</label>
+                    <div class="players-list" id="playersInputs"></div>
+
+                    <div style="margin-top:25px;display:flex;gap:10px">
+                        <button class="btn" id="startGame"><i class="fas fa-dice"></i> เริ่มเกม & สุ่มบทบาท</button>
+                        <button class="btn ghost" id="reset">รีเซ็ต</button>
+                    </div>
                 </div>
 
-                <label style="margin-top:20px">ชื่อผู้เล่น</label>
-                <div class="players-list" id="playersInputs"></div>
-
-                <div style="margin-top:20px;display:flex;gap:8px">
-                    <button class="btn" id="startGame">เริ่มเกม</button>
-                    <button class="btn ghost" id="reset">รีเซ็ต</button>
-                </div>
-            </div>
-
-            <div class="card panel" style="flex:1.5;">
-                <label>สรุปสถานการณ์ปัจจุบัน</label>
-                <div class="status-card" id="statusCard">
-                    <div class="status-text" id="statusText">เตรียมพร้อม: เลือกผู้เล่น</div>
-                    <div style="margin-top:10px;color:var(--muted);font-size:14px" id="playersSummary">เกมยังไม่เริ่มต้น</div>
-                    <div class="mission-tracker" id="missionTracker"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="game-area">
-            <div>
-                <div class="card">
-                    <div style="display:flex;justify-content:space-between;align-items:center; border-bottom: 1px solid #d1d5db; padding-bottom: 15px;">
-                        <div>
-                            <strong style="font-size: 18px;">กระดานเกม</strong>
-                            <div style="font-size:13px;color:var(--muted)">ขั้นตอน: เสนอทีม → โหวต → ภารกิจ</div>
-                        </div>
-                        <div id="roundInfo" style="font-size:16px;font-weight: 700; color:var(--accent-blue)">รอบ: -</div>
-                    </div>
-
-                    <div style="margin-top:18px">
-                        <div style="font-size:14px;color:var(--text-dark); margin-bottom: 8px; font-weight: 600;">ผู้เล่นทั้งหมด:</div>
-                        <div class="players-grid" id="playersGrid"></div>
-                    </div>
-                    
-                    <div style="margin-top:25px">
-                        <div style="display:flex;gap:8px;align-items:center">
-                            <div style="font-size:15px;color:var(--muted); font-weight: 500;">ผู้นำปัจจุบัน:</div>
-                            <div id="currentLeader" style="font-weight:700; color: var(--text-dark); font-size: 18px;">-</div>
-                        </div>
-
-                        <div style="margin-top:10px;display:flex;gap:10px">
-                            <button class="btn" id="proposeTeam" disabled>เริ่มเสนอทีม</button>
-                            <button class="btn ghost" id="clearSelection" disabled>ยกเลิกการเลือก</button>
-                        </div>
-                    </div>
-
-                    <div id="proposeArea" style="margin-top:20px;display:none">
-                        <div style="font-size:14px;color:var(--text-dark); font-weight: 600;">เลือกผู้เล่นสำหรับทีมภารกิจ: (<span id="teamSizeText">0</span> คน)</div>
-                        <div class="players-grid" id="proposalGrid" style="margin-top:10px"></div>
-                        <div style="margin-top:15px">
-                            <button class="btn" id="submitProposal">ส่งทีมเข้าโหวต</button>
-                        </div>
-                    </div>
-
-                    <div id="votingArea" style="margin-top:20px;display:none">
-                        <div style="font-size:14px;color:var(--text-dark); font-weight: 600;">การโหวตทีม (ส่วนตัว)</div>
-                        <div style="margin-top:10px; padding: 15px; border: 1px dashed var(--muted); border-radius: 8px; background: #f0f4f7;">
-                            <div id="votePrompt" style="font-weight:700; font-size: 18px;">ผู้เล่น: -</div>
-                            <div style="display:flex;gap:10px;margin-top:12px">
-                                <button class="btn" style="background-color: var(--success); min-width: 150px;" id="voteYes">VOTE: ผ่าน</button>
-                                <button class="btn ghost" style="color: var(--fail); border-color: var(--fail); min-width: 150px;" id="voteNo">VOTE: ไม่ผ่าน</button>
-                            </div>
-                        </div>
-                        <div class="log" id="voteLog"></div>
-                    </div>
-
-                    <div id="missionArea" style="margin-top:20px;display:none">
-                        <div style="font-size:14px;color:var(--text-dark); font-weight: 600;">ลงคะแนนภารกิจ (ส่วนตัว)</div>
-                        <div id="missionContent" style="margin-top:10px; padding: 15px; border: 1px dashed var(--muted); border-radius: 8px; background: #f0f4f7;">
-                            <div style="font-weight:700; font-size: 18px;" id="missionPrompt">ทีม: -</div>
-                            <div style="margin-top:12px" id="missionChoices"></div>
-                        </div>
-                        <div class="log" id="missionLog"></div>
-                    </div>
-
-                    <div id="resultArea" style="margin-top:18px"></div>
-                </div>
-            </div>
-
-            <div class="panel-right">
-                <div class="card">
-                    <div style="display:flex;justify-content:space-between;align-items:center; border-bottom: 1px solid #d1d5db; padding-bottom: 15px;">
-                        <div style="font-size: 18px; font-weight: 700; color: var(--text-dark);">เปิดเผยบทบาทลับ</div>
-                        <div style="font-size:13px;color:var(--muted)">ส่งเครื่องต่อให้เพื่อนทีละคน</div>
-                    </div>
-                    
-                    <div class="status-card" style="margin-top:15px; border-color: var(--accent-blue); padding: 15px; background: #f0f4f7;">
-                        <div id="revealArea" style="text-align: center;">
-                            <div style="text-align:center;color:var(--muted)" id="revealIntro">กดเริ่มเกมเพื่อสุ่มบทบาท</div>
+                <div class="card panel" style="flex:1.5;">
+                    <h2 style="color:var(--text-dark)">ข้อมูลบทบาท</h2>
+                     <div class="status-card" style="padding: 15px; background: #f0f0f0; border: 1px solid var(--border);">
+                        <div style="text-align: left; font-size: 14px; color: var(--text-dark);">
+                            <div style="font-weight: 700; margin-bottom: 5px; color: var(--success);">**ฝ่ายคนดี (Loyal Servants of Arthur)**</div>
+                            <ul id="goodRolesInfo" style="margin: 5px 0 15px 15px; padding: 0; list-style-type: square; color: var(--muted);">
+                                <li>ผู้หยั่งรู้ (Merlin)</li>
+                                <li>คนดีทั่วไป (Servant)</li>
+                            </ul>
                             
-                            <div style="margin-top:15px; display: flex; justify-content: center;">
-                                <button class="btn" id="openRole" disabled>เปิดบทบาท</button>
-                            </div>
-
-                            <div id="nextPlayerStatus" style="margin-top:15px; font-weight: 600; color: var(--accent-blue); display: none;">
-                                ผู้เล่นคนถัดไป: <span id="nextPlayerNameDisplay"></span>
-                            </div>
+                            <div style="font-weight: 700; margin-bottom: 5px; color: var(--fail);">**ฝ่ายคนร้าย (Minions of Mordred)**</div>
+                            <ul id="evilRolesInfo" style="margin: 5px 0 0 15px; padding: 0; list-style-type: square; color: var(--muted);">
+                                <li>นักฆ่า (Assassin)</li>
+                                <li>คนร้ายทั่วไป (Minion)</li>
+                            </ul>
                         </div>
-                    </div>
-
-                    <div style="margin-top:20px">
-                        <label>บันทึกเหตุการณ์ (Game Log)</label>
-                        <div class="log" id="gameLog"></div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <div id="gameView" class="view">
+            <div class="controls">
+                 <div class="card panel" style="flex:1.5;">
+                    <label>สรุปสถานการณ์ปัจจุบัน</label>
+                    <div class="status-card" id="statusCard">
+                        <div class="status-text" id="statusText"><i class="fas fa-shield-alt"></i> ภารกิจที่ 1: เสนอทีม</div>
+                        <div style="margin-top:10px;color:var(--muted);font-size:14px" id="playersSummary">ผู้เล่น X คน - ผู้นำ: Name</div>
+                        <div class="mission-tracker" id="missionTracker"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <div>
+                    <div class="card">
+                        <div style="display:flex;justify-content:space-between;align-items:center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                            <div>
+                                <strong style="font-size: 18px; color: var(--text-dark);"><i class="fas fa-map-marker-alt"></i> กระดานภารกิจ</strong>
+                                <div style="font-size:13px;color:var(--muted)">ขั้นตอน: เสนอทีม → โหวตทีม → ภารกิจลับ</div>
+                            </div>
+                            <div id="roundInfo" style="font-size:16px;font-weight: 700; color:var(--accent-blue)">รอบ: 1 / 5</div>
+                        </div>
+
+                        <div style="margin-top:18px">
+                            <div style="font-size:14px;color:var(--text-dark); margin-bottom: 8px; font-weight: 600;">ผู้เล่นทั้งหมด:</div>
+                            <div class="players-grid" id="playersGrid"></div>
+                        </div>
+                        
+                        <div id="proposeContainer" style="margin-top:25px; display: none;">
+                            <div style="font-size:15px;color:var(--muted); font-weight: 500;">ผู้นำปัจจุบัน: <span id="currentLeader" style="font-weight:800; color: var(--text-dark); font-size: 18px;">-</span></div>
+
+                            <div style="margin-top:15px;display:flex;gap:10px">
+                                <button class="btn" id="proposeTeam" disabled><i class="fas fa-user-plus"></i> เริ่มเสนอทีม</button>
+                                <button class="btn ghost" id="clearSelection" disabled><i class="fas fa-times"></i> ยกเลิกการเลือก</button>
+                            </div>
+                        </div>
+
+                        <div id="proposeArea" style="margin-top:20px;display:none">
+                            <div style="font-size:16px;color:var(--text-dark); font-weight: 700; border-bottom: 1px dashed var(--border); padding-bottom: 10px;"><i class="fas fa-users"></i> เลือกผู้เล่นสำหรับทีมภารกิจ: (<span id="teamSizeText">0</span> คน)</div>
+                            <div class="players-grid" id="proposalGrid" style="margin-top:10px"></div>
+                            <div style="margin-top:15px">
+                                <button class="btn" id="submitProposal" disabled><i class="fas fa-check-circle"></i> ส่งทีมเข้าโหวต</button>
+                            </div>
+                        </div>
+
+                        <div id="votingArea" style="margin-top:25px;display:none">
+                            <div style="font-size:16px;color:var(--text-dark); font-weight: 700; border-bottom: 1px dashed var(--border); padding-bottom: 10px;"><i class="fas fa-hand-point-right"></i> การโหวตทีม (ส่วนตัว)</div>
+                            <div style="margin-top:10px; padding: 18px; border: 1px dashed var(--accent-blue); border-radius: 8px; background: #f0f8ff;">
+                                <div id="votePrompt" style="font-weight:800; font-size: 20px; color: var(--text-dark);">ผู้เล่น: -</div>
+                                <div style="display:flex;gap:15px;margin-top:15px">
+                                    <button class="btn" style="background-color: var(--success); min-width: 150px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);" id="voteYes"><i class="fas fa-thumbs-up"></i> VOTE: ผ่าน</button>
+                                    <button class="btn ghost" style="color: var(--fail); border-color: var(--fail); min-width: 150px;" id="voteNo"><i class="fas fa-thumbs-down"></i> VOTE: ไม่ผ่าน</button>
+                                </div>
+                            </div>
+                            <div class="log" id="voteLog"></div>
+                        </div>
+
+                        <div id="missionArea" style="margin-top:25px;display:none">
+                            <div style="font-size:16px;color:var(--text-dark); font-weight: 700; border-bottom: 1px dashed var(--border); padding-bottom: 10px;"><i class="fas fa-bomb"></i> ลงคะแนนภารกิจ (ส่วนตัว)</div>
+                            <div id="missionContent" style="margin-top:10px; padding: 18px; border: 1px dashed var(--fail); border-radius: 8px; background: #fff0f0;">
+                                <div style="font-weight:800; font-size: 20px; color: var(--text-dark);" id="missionPrompt">ทีม: -</div>
+                                <div style="margin-top:15px" id="missionChoices"></div>
+                            </div>
+                            <div class="log" id="missionLog"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-right">
+                    <div class="card">
+                        <div style="display:flex;justify-content:space-between;align-items:center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                            <div style="font-size: 18px; font-weight: 700; color: var(--text-dark);"><i class="fas fa-history"></i> บันทึกเหตุการณ์</div>
+                            <div style="font-size:13px;color:var(--muted)">Game Log</div>
+                        </div>
+                        
+                        <div style="margin-top:10px">
+                            <div class="log" id="gameLog"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <footer>
-            <div style="margin-top:30px; text-align: center; color: var(--muted); font-size: 12px;">เต็ม 10 ให้ 7 เจ็ดว่าดัดจัดว่าเด็ด มั้วะ</div>
+            <div style="margin-top:40px; text-align: center; color: var(--muted); font-size: 12px;">คนอ่านขี้สงสัยหรือขี้เสือกครับ</div>
         </footer>
     </div>
 
     <script>
-        // --- Data models & helpers (Code logic remains unchanged) ---
-        const rolesDef = {GOOD:'คนดี', EVIL:'คนร้าย', SEER:'ผู้หยั่งรู้', ASSASSIN:'นักฆ่า'};
+        // --- Data models & helpers ---
+        const rolesDef = {GOOD:'คนดี', EVIL:'คนร้าย', SEER:'ผู้หยั่งรู้ (Merlin)', ASSASSIN:'นักฆ่า (Assassin)'};
 
         const teamSizeTable = {
             5:[2,3,2,3,3], 6:[2,3,4,3,4], 7:[2,3,3,4,4], 8:[3,4,4,5,5], 9:[3,4,4,5,5], 10:[3,4,4,5,5]
         };
         const roleCounts = {5:{G:3,E:2},6:{G:4,E:2},7:{G:4,E:3},8:{G:5,E:3},9:{G:6,E:3},10:{G:6,E:4}};
 
-        let players = []; // {name, role, id}
+        let players = []; 
         let playerCount = 5;
 
         // game state
-        let game = {started:false, leaderIndex:0, round:0, proposal:[], proposalHistory:[], voteResults:[], missionResults:[], rejectedCount:0, revealIndex:0, proposalAccepted:false, phase:'setup'};
+        let game = {started:false, leaderIndex:0, round:0, proposal:[], proposalHistory:[], voteResults:[], missionResults:[], rejectedCount:0, revealIndex:0, proposalAccepted:false, phase:'setup', currentTeamSize:0};
 
         // --- UI elements ---
+        const setupView = document.getElementById('setupView');
+        const gameView = document.getElementById('gameView');
         const playerCountEl = document.getElementById('playerCount');
         const playersInputs = document.getElementById('playersInputs');
         const setNamesBtn = document.getElementById('setNames');
@@ -484,11 +509,10 @@
         const resetBtn = document.getElementById('reset');
         const statusText = document.getElementById('statusText');
         const playersSummary = document.getElementById('playersSummary');
-        const revealIntro = document.getElementById('revealIntro');
-        const openRoleBtn = document.getElementById('openRole');
         const playersGrid = document.getElementById('playersGrid');
         const currentLeader = document.getElementById('currentLeader');
         const proposeTeamBtn = document.getElementById('proposeTeam');
+        const proposeContainer = document.getElementById('proposeContainer');
         const proposeArea = document.getElementById('proposeArea');
         const proposalGrid = document.getElementById('proposalGrid');
         const submitProposalBtn = document.getElementById('submitProposal');
@@ -498,81 +522,86 @@
         const voteLog = document.getElementById('voteLog');
         const voteLogGlobal = document.getElementById('gameLog');
         const missionArea = document.getElementById('missionArea');
-        const missionContent = document.getElementById('missionContent'); // New element to control visibility
+        const missionContent = document.getElementById('missionContent'); 
         const missionPrompt = document.getElementById('missionPrompt');
         const missionChoices = document.getElementById('missionChoices');
         const roundInfo = document.getElementById('roundInfo');
         const missionTracker = document.getElementById('missionTracker');
         const teamSizeText = document.getElementById('teamSizeText');
         
-        // Modal Elements (Central Notification)
+        // Modal Elements
         const centralModal = document.getElementById('central-modal');
         const modalContainer = document.getElementById('modal-container');
         const modalTitle = document.getElementById('modal-title');
         const modalMessage = document.getElementById('modal-message');
         const modalDismissBtn = document.getElementById('modal-dismiss');
+        const modalIcon = document.getElementById('modal-icon');
 
-        // Role Reveal Modal Elements
         const roleRevealModal = document.getElementById('role-reveal-modal');
         const revealContent = document.getElementById('reveal-content');
         const revealNameModal = document.getElementById('revealNameModal');
         const revealRoleModal = document.getElementById('revealRoleModal');
         const revealDescModal = document.getElementById('revealDescModal');
         const roleModalNextBtn = document.getElementById('role-modal-next');
-        const nextPlayerStatus = document.getElementById('nextPlayerStatus');
-        const nextPlayerNameDisplay = document.getElementById('nextPlayerNameDisplay');
+
+        // --- View Controller ---
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(viewId).classList.add('active');
+        }
 
         // --------------------------
-        // Central Modal Notification (Enhanced for Player Change)
+        // Central Modal Notification 
         // --------------------------
         
-        // *NEW: Default Modal Dismiss Handler and Setup*
-        // Handler นี้ถูกเรียกเมื่อกดปุ่ม 'ดำเนินการต่อ' ทั่วไป
         const defaultModalDismissHandler = () => {
              centralModal.classList.remove('active');
-             modalDismissBtn.textContent = 'ดำเนินการต่อ'; // Reset text
-             modalDismissBtn.onclick = defaultModalDismissHandler; // Reset handler
+             modalDismissBtn.textContent = 'ดำเนินการต่อ'; 
+             modalDismissBtn.onclick = defaultModalDismissHandler; 
              
-             // *CRITICAL FOR MISSION PHASE*: ตรวจสอบว่าหลังจากปิด Modal แล้ว เป็นตาของ Mission หรือไม่
+             // After dismissing transfer modal, immediately show next mission vote content
              if (game.phase === 'mission' && game.missionVoteBuffer.length < game.proposal.length) {
                  const nextIndex = game.missionVoteBuffer.length;
-                 // ใช้ setTimeout 0 เพื่อให้แน่ใจว่า Modal ปิดก่อนที่จะเรียกโชว์ตัวเลือกคนถัดไป
+                 missionContent.style.display = 'block'; 
                  setTimeout(() => showMissionChoiceForIndex(nextIndex, false), 0);
              }
         };
-        modalDismissBtn.onclick = defaultModalDismissHandler; // Set default handler initially
+        modalDismissBtn.onclick = defaultModalDismissHandler; 
 
         function showCentralModal(title, message, type = 'info', playerTurn = null) {
             let actualType = type;
-            if (playerTurn) {
+            let iconClass = 'fas fa-info-circle';
+            
+            // Set icon and type
+            if (type === 'success') iconClass = 'fas fa-check-circle';
+            else if (type === 'fail') iconClass = 'fas fa-exclamation-triangle';
+            else if (type === 'player-turn') iconClass = 'fas fa-user-secret'; // New icon for player turn
+
+            // Override message/type for player turn flow
+            if (playerTurn && type!=='success' && type!=='fail' && type!=='end') { 
                 actualType = 'player-turn';
                 message = `กรุณาส่งเครื่องต่อให้ **${playerTurn}** เพื่อดำเนินการต่อ`;
+            } else if (type === 'end') {
+                actualType = 'info'; 
             }
 
             modalContainer.className = `modal-content ${actualType}`;
+            modalIcon.innerHTML = `<i class="${iconClass}"></i>`;
             modalTitle.textContent = title;
-            modalMessage.innerHTML = message; // Use innerHTML to allow for strong tags
+            modalMessage.innerHTML = message; 
             centralModal.classList.add('active');
             
-            // Set button to default action and text (unless overridden by endGame)
             modalDismissBtn.textContent = 'ดำเนินการต่อ';
             modalDismissBtn.onclick = defaultModalDismissHandler;
 
-            const isCritical = (type.includes('success') || type.includes('fail') || title.includes('จบเกม'));
-            
-            if (isCritical && !title.includes('จบเกม')) {
-                 modalDismissBtn.style.display = 'inline-block';
-            } else {
-                 modalDismissBtn.style.display = 'inline-block';
-            }
-            
-            // *NEW CRITICAL FIX*: Hide the mission content when showing the modal if in mission phase
             if (game.phase === 'mission') {
-                missionContent.style.display = 'none';
+                missionContent.style.display = 'none'; // Hide mission content when modal is active
             }
         }
         
-        // *NEW CRITICAL FIX*: Override dismissal to re-show mission content
+        // Mission Dismissal Handler (Allows sequential private mission voting)
         const missionDismissHandler = () => {
             centralModal.classList.remove('active');
             modalDismissBtn.textContent = 'ดำเนินการต่อ';
@@ -580,7 +609,6 @@
             
             if (game.phase === 'mission' && game.missionVoteBuffer.length < game.proposal.length) {
                 const nextIndex = game.missionVoteBuffer.length;
-                // Force show mission content immediately before rendering choices
                 missionContent.style.display = 'block'; 
                 showMissionChoiceForIndex(nextIndex, false);
             }
@@ -591,25 +619,29 @@
             missionTracker.innerHTML = '';
             const teamSizes = teamSizeTable[playerCount];
             if (!teamSizes) return;
+            const currentRound = game.round > 0 ? game.round : 1;
 
             for (let i = 0; i < 5; i++) {
                 const slot = document.createElement('div');
                 const result = game.missionResults[i];
-                const rejectedCountText = (game.round === i + 1 && game.phase === 'propose' && game.rejectedCount > 0) ? ` (ถูกปฏิเสธ: ${game.rejectedCount})` : '';
-
+                
                 slot.className = 'mission-slot';
-                slot.innerHTML = `M${i + 1} (${teamSizes[i]})<span></span>${rejectedCountText}`;
+                slot.innerHTML = `M${i + 1} (${teamSizes[i]})<span>${i+1}</span>`;
 
                 if (result) {
                     slot.classList.add('done');
                     slot.classList.add(result.missionFailed ? 'fail' : 'success');
                     slot.title = result.missionFailed ? `ล้มเหลว: ${result.failed} Fail(s)` : 'สำเร็จ';
+                    slot.querySelector('span').innerHTML = result.missionFailed ? `<i class="fas fa-times"></i>` : `<i class="fas fa-check"></i>`;
+                } else if (i + 1 === currentRound && game.phase !== 'ended') {
+                    slot.classList.add('current');
                 }
+                
                 missionTracker.appendChild(slot);
             }
         }
-
-        // init functions
+        
+        // Setup Logic
         function makeNameInputs(){
             playersInputs.innerHTML = '';
             playerCount = parseInt(playerCountEl.value);
@@ -620,7 +652,6 @@
                 playersInputs.appendChild(div);
             }
         }
-
         playerCountEl.addEventListener('change', makeNameInputs);
         setNamesBtn.addEventListener('click', ()=>{
             makeNameInputs();
@@ -628,11 +659,12 @@
             inputs.forEach((el,i)=>el.value = 'ผู้เล่น '+(i+1));
         });
         resetBtn.addEventListener('click', ()=>location.reload());
-
         makeNameInputs();
-
-        // --- role assign ---
+        
         function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+        // --- Core Game Flow: Start Game ---
+        startBtn.addEventListener('click', startGame);
 
         function startGame(){
             const inputs = playersInputs.querySelectorAll('input');
@@ -644,7 +676,10 @@
             playerCount = players.length;
             
             const counts = roleCounts[playerCount];
-            if(!counts) { showCentralModal('ข้อผิดพลาด!', 'จำนวนผู้เล่นไม่ถูกต้อง', 'fail'); return; }
+            if(!counts) { 
+                 showCentralModal('ข้อผิดพลาด!', 'จำนวนผู้เล่นไม่ถูกต้อง (ต้อง 5-10 คน)', 'fail'); 
+                 return; 
+            }
 
             let rolesPool = [];
             rolesPool.push(rolesDef.SEER); for(let i=0;i<counts.G-1;i++) rolesPool.push(rolesDef.GOOD);
@@ -653,172 +688,194 @@
             players.forEach((p,i)=>p.role=rolesPool[i]);
 
             game.started=true; game.leaderIndex=0; game.round=0; game.revealIndex=0; game.proposal=[]; game.proposalHistory=[]; game.voteResults=[]; game.missionResults=[]; game.rejectedCount=0; game.phase='reveal';
-            updateStatus(); renderPlayersGrid(); setupRevealArea(); 
+            
+            showView('gameView'); 
+            updateStatus(); 
+            renderPlayersGrid(); 
             log(`เกมเริ่ม: ผู้เล่น ${playerCount} คน`);
             
-            // MODAL for start game (no player turn, just info)
-            showCentralModal('เกมเริ่มต้น!', `สุ่มบทบาทเรียบร้อย! ส่งเครื่องต่อให้ **${players[0].name}** เพื่อเริ่มเปิดบทบาท`, 'info');
-            openRoleBtn.disabled = false;
+            // Start the Role Reveal flow
+            setupRevealFlow(); 
+
+            const firstPlayerName = players[0].name;
+            showCentralModal('เกมเริ่มต้น!', 
+                             `สุ่มบทบาทเรียบร้อย! ส่งเครื่องต่อให้ **${firstPlayerName}** เพื่อเริ่มเปิดบทบาทส่วนตัว`, 
+                             'info', firstPlayerName);
+            
+            // Explicitly set the button for the reveal phase
+            modalDismissBtn.textContent = 'แสดงบทบาท (ส่วนตัว)';
+            modalDismissBtn.onclick = openRoleModal;
         }
 
-        startBtn.addEventListener('click', startGame);
-
+        // --- Status and UI Updates ---
         function updateStatus(){
             const teamSize = game.round > 0 ? teamSizeTable[playerCount][game.round-1] : 0;
             let status = 'ยังไม่เริ่มเกม';
             if (game.started) {
                 if (game.phase === 'ended') status = 'จบเกมแล้ว!';
                 else if (game.phase === 'reveal') status = 'เปิดเผยบทบาท...';
-                else if (game.phase === 'propose') status = 'ผู้นำเสนอทีม';
-                else if (game.phase === 'voting') status = 'กำลังโหวตทีม';
-                else if (game.phase === 'mission') status = 'กำลังทำภารกิจ';
+                else if (game.phase === 'propose' || game.phase === 'leader_action') status = `ภารกิจที่ ${game.round}: เสนอทีม`;
+                else if (game.phase === 'voting') status = `ภารกิจที่ ${game.round}: โหวตทีม`;
+                else if (game.phase === 'mission') status = `ภารกิจที่ ${game.round}: ทำภารกิจ`;
             }
 
-            statusText.textContent = status;
-            playersSummary.textContent = game.started ? `ผู้เล่น ${playerCount} คน — ผู้นำ: ${players[game.leaderIndex].name}` : 'เลือกจำนวนผู้เล่นเพื่อเริ่มเกม';
+            statusText.innerHTML = status;
+            playersSummary.textContent = game.started ? `ผู้เล่น ${playerCount} คน — ผู้นำปัจจุบัน: ${players[game.leaderIndex].name}` : 'เลือกจำนวนผู้เล่นเพื่อเริ่มเกม';
             roundInfo.textContent = game.round>0 ? `ภารกิจ ${game.round} / 5 (ทีม ${teamSize} คน) - ปฏิเสธ: ${game.rejectedCount}/5` : 'รอบ: -';
             currentLeader.textContent = game.started ? players[game.leaderIndex].name : '-';
             teamSizeText.textContent = teamSize;
-            renderMissionTracker();
+            game.currentTeamSize = teamSize;
 
-            proposeTeamBtn.disabled = game.phase !== 'propose';
-            clearSelectionBtn.disabled = game.phase !== 'propose';
-            const proposalSize = currentProposal ? currentProposal.size : 0;
-            submitProposalBtn.disabled = game.phase !== 'propose' || proposalSize !== teamSize;
+            // Visibility control based on phase
+            proposeContainer.style.display = game.phase === 'propose' || game.phase === 'leader_action' ? 'block' : 'none';
+            proposeArea.style.display = game.phase === 'leader_action' ? 'block' : 'none';
+            voteArea.style.display = game.phase === 'voting' ? 'block' : 'none';
+            missionArea.style.display = game.phase === 'mission' ? 'block' : 'none';
+            
+            // Button controls
+            const isLeader = game.started && game.phase === 'propose';
+            proposeTeamBtn.disabled = !isLeader;
+            clearSelectionBtn.disabled = !isLeader;
+            
+            const proposalSize = currentProposal.size || 0;
+            submitProposalBtn.disabled = game.phase !== 'leader_action' || proposalSize !== game.currentTeamSize;
+            
+            renderMissionTracker();
         }
 
         function renderPlayersGrid(){
             playersGrid.innerHTML='';
             players.forEach(p=>{
-                const el = document.createElement('div'); el.className='pill'; el.id='player-'+p.id; el.textContent=p.name; if(players.indexOf(p)===game.leaderIndex) el.classList.add('leader');
-                el.addEventListener('click', ()=>{ if(game.phase==='propose') toggleProposal(p.id); });
+                const el = document.createElement('div'); el.className='pill'; el.id='player-'+p.id; el.textContent=p.name; 
+                if(players.indexOf(p)===game.leaderIndex) el.classList.add('leader');
+                el.addEventListener('click', ()=>{ if(game.phase==='leader_action') toggleProposal(p.id); });
                 playersGrid.appendChild(el);
             });
             updateStatus();
         }
 
-        // --- reveal flow ---
-        function setupRevealArea(){
-            revealIntro.style.display='block';
-            nextPlayerStatus.style.display='none';
-            // อัปเดตชื่อผู้เล่นคนแรกที่ต้องเปิดบทบาท
-            if (players.length > 0) {
-                 nextPlayerNameDisplay.textContent = players[0].name;
-            }
+        // --- Role Reveal Flow ---
+        function setupRevealFlow(){
             game.revealIndex = 0;
-            openRoleBtn.disabled=false;
+            modalDismissBtn.onclick = openRoleModal; 
         }
         
-        // ฟังก์ชันสำหรับเปิด Modal บทบาท
         function openRoleModal() {
+            centralModal.classList.remove('active'); 
+            
             const idx = game.revealIndex; 
             const p = players[idx];
-            const roleIsGood = p.role === rolesDef.GOOD || p.role === rolesDef.SEER;
-            const isEvil = p.role === rolesDef.EVIL || p.role === rolesDef.ASSASSIN;
+            const roleIsGood = p.role.includes('คนดี') || p.role.includes('ผู้หยั่งรู้');
+            const isEvil = p.role.includes('คนร้าย') || p.role.includes('นักฆ่า');
         
             revealContent.classList.remove('role-good', 'role-evil'); 
             revealContent.classList.add(roleIsGood ? 'role-good' : 'role-evil');
             
             revealNameModal.textContent = p.name; 
-            revealRoleModal.textContent = p.role; 
+            revealRoleModal.textContent = p.role.split('(')[0].trim(); // Show only the Thai name
             
             let extraInfo = '';
             
             if (isEvil) {
                 const otherEvils = players.filter(pl => 
-                    (pl.role === rolesDef.EVIL || pl.role === rolesDef.ASSASSIN) && pl.id !== p.id
+                    (pl.role.includes('คนร้าย') || pl.role.includes('นักฆ่า')) && pl.id !== p.id
                 ).map(pl => pl.name);
                 if (otherEvils.length > 0) {
-                    extraInfo = `<div class="secret-info evil">**เพื่อนร่วมทีมคนร้าย**: ${otherEvils.join(', ')}</div>`;
+                    extraInfo = `<div class="secret-info evil"><i class="fas fa-mask"></i> **เพื่อนร่วมทีมคนร้าย**: ${otherEvils.join(', ')}</div>`;
                 } else {
-                        extraInfo = `<div class="secret-info evil">**คุณเป็นคนร้ายคนเดียว!**</div>`;
+                        extraInfo = `<div class="secret-info evil"><i class="fas fa-mask"></i> **คุณเป็นคนร้ายคนเดียว!**</div>`;
                 }
 
-            } else if (p.role === rolesDef.SEER) {
+            } else if (p.role.includes(rolesDef.SEER)) {
                 const allEvils = players.filter(pl => 
-                    pl.role === rolesDef.EVIL || pl.role === rolesDef.ASSASSIN
+                    pl.role.includes('คนร้าย') || pl.role.includes('นักฆ่า')
                 ).map(pl => pl.name);
-                extraInfo = `<div class="secret-info good">**คนร้ายที่คุณเห็น**: ${allEvils.join(', ')}</div>`;
+                extraInfo = `<div class="secret-info good"><i class="fas fa-eye"></i> **คนร้ายที่คุณเห็น**: ${allEvils.join(', ')}</div>`;
             }
 
             revealDescModal.innerHTML = roleDescription(p.role) + extraInfo;
             
-            // แสดง Modal บทบาท
-            roleRevealModal.classList.add('active');
+            roleRevealModal.classList.add('active'); 
             log(`เปิดบทบาทของ ${p.name}`);
         }
         
-        // ฟังก์ชันสำหรับจัดการการส่งเครื่องต่อหลังจากดูบทบาท
         function moveNextReveal() {
-            roleRevealModal.classList.remove('active'); // ปิด Modal บทบาท
+            roleRevealModal.classList.remove('active'); 
 
             game.revealIndex++;
             if(game.revealIndex>=players.length){
-                // ผู้เล่นคนสุดท้ายดูบทบาทจบแล้ว -> เริ่มเกม
-                
+                // End of reveal -> Start Round 1
                 game.phase='propose'; 
                 game.round=1; 
                 updateStatus(); 
                 renderPlayersGrid(); 
-                log('การเปิดบทบาทเสร็จสิ้น — เริ่มเสนอทีม');
+                log('การเปิดบทบาทเสร็จสิ้น — เริ่มภารกิจที่ 1');
                 
-                // ซ่อนปุ่มเปิดบทบาทเมื่อเริ่มเกมแล้ว
-                openRoleBtn.style.display = 'none';
-                revealIntro.style.display = 'none';
-                nextPlayerStatus.style.display = 'none';
-
-                renderProposalUI();
-                showCentralModal('เริ่มภารกิจที่ 1', 'ผู้นำคนแรกพร้อมเสนอทีม!', 'info', players[game.leaderIndex].name);
+                // CRITICAL FIX: ต้องเรียก prepareProposePhase เพื่อให้ UI เสนอทีมปรากฏ
+                prepareProposePhase(); 
+                
+                showCentralModal('เริ่มภารกิจที่ 1', 
+                                 'ผู้นำคนแรกพร้อมเสนอทีม!', 
+                                 'info', players[game.leaderIndex].name);
+                
+                modalDismissBtn.onclick = defaultModalDismissHandler;
                 return;
             }
             
-            // เตรียมผู้เล่นคนถัดไป
-            const previousPlayerName = players[game.revealIndex - 1].name;
             const nextPlayerName = players[game.revealIndex].name;
-
-            // อัปเดต UI ให้พร้อมสำหรับผู้เล่นถัดไป
-            openRoleBtn.disabled = false;
-            nextPlayerNameDisplay.textContent = nextPlayerName;
-            revealIntro.style.display = 'none';
-            nextPlayerStatus.style.display = 'block';
-
-            // Modal แจ้งเตือนการส่งเครื่อง
-            showCentralModal('ตาถัดไป!', `คุณ ${previousPlayerName} ปิดหน้าจอแล้ว`, 'info', nextPlayerName);
+            showCentralModal('ตาถัดไป!', `คุณ ${players[game.revealIndex - 1].name} ดูบทบาทเสร็จแล้ว`, 'player-turn', nextPlayerName);
+            
+            modalDismissBtn.onclick = openRoleModal;
+            modalDismissBtn.textContent = 'แสดงบทบาท (ส่วนตัว)'; 
         }
 
-        openRoleBtn.addEventListener('click', openRoleModal);
         roleModalNextBtn.addEventListener('click', moveNextReveal);
 
         function roleDescription(r){
-            if(r===rolesDef.GOOD) return 'คนดี: โหวตภารกิจได้เพียง ผ่าน (ไม่สามารถเลือกไม่ผ่าน)';
-            if(r===rolesDef.EVIL) return 'คนร้าย: สามารถโหวตผ่านหรือไม่ผ่านได้ และสามารถลงคะแนน Fail ในภารกิจ';
-            if(r===rolesDef.SEER) return 'ผู้หยั่งรู้: อยู่ฝ่ายคนดี - คุณรู้ว่าใครคือคนร้าย';
-            if(r===rolesDef.ASSASSIN) return 'นักฆ่า: อยู่ฝ่ายคนร้าย - คุณรู้ว่าใครคือคนร้าย และมีสิทธิ์ฆ่าผู้เล่นหลังคนดีชนะ';
+            if(r.includes(rolesDef.GOOD)) return 'คนดี: ภารกิจของคุณคือทำภารกิจให้สำเร็จ 3 ครั้ง';
+            if(r.includes(rolesDef.EVIL)) return 'คนร้าย: ภารกิจของคุณคือทำภารกิจให้ล้มเหลว 3 ครั้ง';
+            if(r.includes(rolesDef.SEER)) return 'ผู้หยั่งรู้: คุณรู้ว่าใครคือคนร้ายทุกคน';
+            if(r.includes(rolesDef.ASSASSIN)) return 'นักฆ่า: คุณรู้ว่าใครคือคนร้ายทุกคน และมีสิทธิ์สังหารผู้หยั่งรู้เพื่อชิงชัยชนะ';
             return '';
         }
 
-        // --- proposal & voting ---
+        // --- Proposal & Voting Flow ---
         let currentProposal = new Set();
+
+        function prepareProposePhase(){
+            game.phase='propose'; 
+            currentProposal = new Set();
+            updateStatus();
+            renderProposalUI();
+        }
+
+        proposeTeamBtn.addEventListener('click', ()=>{
+             // This button changes the phase state to allow clicking on players
+            game.phase='leader_action';
+            renderProposalUI();
+            updateStatus();
+        });
 
         function renderProposalUI(){
             proposeArea.style.display='block'; proposalGrid.innerHTML=''; currentProposal = new Set();
-            const teamSize = teamSizeTable[playerCount][game.round-1];
+            
             players.forEach(p=>{
-                const pill = document.createElement('div'); pill.className='pill'; pill.textContent=p.name; pill.id='prop-'+p.id; pill.addEventListener('click', ()=>{ toggleProposal(p.id); });
+                const pill = document.createElement('div'); pill.className='pill'; pill.textContent=p.name; pill.id='prop-'+p.id; 
+                pill.addEventListener('click', ()=>{ toggleProposal(p.id); });
                 proposalGrid.appendChild(pill);
             });
             updateStatus();
         }
 
         function toggleProposal(id){
-            if(game.phase!=='propose') return;
-            const teamSize = teamSizeTable[playerCount][game.round-1];
+            if(game.phase!=='leader_action') return;
+            
             const el = document.getElementById('prop-'+id);
             if(currentProposal.has(id)){ 
                 currentProposal.delete(id); 
                 el.classList.remove('selected'); 
             } else { 
-                if(currentProposal.size<teamSize){ 
+                if(currentProposal.size < game.currentTeamSize){ 
                     currentProposal.add(id); 
                     el.classList.add('selected'); 
                 } 
@@ -826,29 +883,38 @@
             updateStatus();
         }
 
-        clearSelectionBtn.addEventListener('click', ()=>{currentProposal=new Set(); Array.from(proposalGrid.children).forEach(c=>c.classList.remove('selected')); updateStatus();});
+        clearSelectionBtn.addEventListener('click', ()=>{
+            currentProposal = new Set(); 
+            Array.from(proposalGrid.children).forEach(c=>c.classList.remove('selected')); 
+            updateStatus();
+        });
 
         submitProposalBtn.addEventListener('click', ()=>{
-            const teamSize = teamSizeTable[playerCount][game.round-1];
-            if(currentProposal.size!==teamSize){showCentralModal('เลือกทีมไม่ครบ!', `กรุณาเลือกผู้เล่นให้ครบ ${teamSize} คน`, 'info');return}
+            if(currentProposal.size!==game.currentTeamSize){showCentralModal('เลือกทีมไม่ครบ!', `กรุณาเลือกผู้เล่นให้ครบ ${game.currentTeamSize} คน`, 'info');return}
             game.proposal = Array.from(currentProposal);
-            game.phase='voting'; proposeArea.style.display='none'; voteArea.style.display='block'; voteLog.innerHTML=''; game.votesNeeded = playerCount; game.votesCollected = 0; game.voteBuffer = [];
+            game.phase='voting'; 
             
-            log(`เสนอทีม: ${game.proposal.map(i=>players[i].name).join(', ')}`);
+            // Hide propose UI, show voting UI
+            proposeArea.style.display='none'; 
+            voteArea.style.display='block'; 
+            
+            game.votesCollected = 0; game.voteBuffer = [];
+            
+            log(`ผู้นำ ${players[game.leaderIndex].name} เสนอทีม: ${game.proposal.map(i=>players[i].name).join(', ')}`);
             
             // MODAL for start voting
             const firstVoter = players[game.votesCollected].name;
             votePrompt.textContent = `ผู้เล่น: ${firstVoter} (โหวตเป็นการส่วนตัว)`; 
-            showCentralModal('เริ่มโหวตทีม!', `ผู้นำ ${players[game.leaderIndex].name} เสนอทีมแล้ว`, 'info', firstVoter);
+            voteLog.innerHTML = 'รอกาโหวต...';
+            showCentralModal('เริ่มโหวตทีม!', `ทีมถูกเสนอแล้ว: ${game.proposal.map(i=>players[i].name).join(', ')}`, 'info', firstVoter);
             updateStatus();
         });
 
-        // voting — single-device private sequential votes
+        // --- Voting Execution ---
         document.getElementById('voteYes').addEventListener('click', ()=>castVote(true));
         document.getElementById('voteNo').addEventListener('click', ()=>castVote(false));
 
         function castVote(choice){
-            // Ensure modal is closed before casting vote
             if (centralModal.classList.contains('active')) {
                 showCentralModal('โปรดดำเนินการต่อ!', 'กรุณากด "ดำเนินการต่อ" เพื่อปิดการแจ้งเตือน', 'info');
                 return;
@@ -857,104 +923,98 @@
             const voterIdx = game.votesCollected; const voter = players[voterIdx];
             game.voteBuffer.push({voter:voter.name, choice}); game.votesCollected++;
             
-            if(game.votesCollected<playerCount){ 
+            if(game.votesCollected < playerCount){ 
                 voteLog.innerHTML = `โหวตแล้ว: ${game.votesCollected}/${playerCount}`;
                 const nextVoter = players[game.votesCollected].name;
                 votePrompt.textContent = `ผู้เล่น: ${nextVoter} (โหวตเป็นการส่วนตัว)`; 
                 
-                // MODAL for next voter
-                showCentralModal('ตาโหวตถัดไป', `คุณ ${voter.name} โหวตเสร็จแล้ว`, 'info', nextVoter);
+                showCentralModal('ตาโหวตถัดไป', `คุณ ${voter.name} โหวตเสร็จแล้ว`, 'player-turn', nextVoter);
 
-            } else { // reveal votes
+            } else { // Finalize Voting
                 const yes = game.voteBuffer.filter(v=>v.choice).length; const no = playerCount - yes;
-                voteLog.innerHTML = `ผลโหวต: ผ่าน ${yes} — ไม่ผ่าน ${no}`;
-                log(`โหวตทีม: ผ่าน ${yes} / ไม่ผ่าน ${no}`);
+                voteLog.innerHTML = `★ ผลโหวต: ผ่าน **${yes}** — ไม่ผ่าน **${no}**`;
+                log(`ผลโหวตทีม: ผ่าน ${yes} / ไม่ผ่าน ${no}`);
                 
-                // decide
-                if(yes>no){ // accepted
-                    game.proposalAccepted=true; game.rejectedCount=0; game.phase='mission'; voteArea.style.display='none'; missionArea.style.display='block'; 
+                if(yes>no){ // Accepted
+                    game.proposalAccepted=true; game.rejectedCount=0; game.phase='mission'; voteArea.style.display='none'; 
                     
-                    // *CRITICAL FIX: Call prepareMission which now handles the initial modal*
                     prepareMission();
                     
-                } else { // rejected
-                    game.proposalAccepted=false; game.rejectedCount++; game.leaderIndex = (game.leaderIndex+1)%playerCount; game.phase='propose'; voteArea.style.display='none'; renderPlayersGrid();
+                } else { // Rejected
+                    game.proposalAccepted=false; game.rejectedCount++; 
+                    game.leaderIndex = (game.leaderIndex+1)%playerCount; 
                     game.votesCollected=0; game.voteBuffer=[]; game.proposal=[]; 
                     
-                    if(game.rejectedCount>=5){ // 5 rejections -> evil wins
-                        endGame('evil_auto'); return;
-                    }
+                    if(game.rejectedCount>=5){ endGame('evil_auto'); return; }
                     
                     log(`เสนอทีมถูกปฏิเสธ (${game.rejectedCount}/5)`);
-                    // MODAL for rejected team
-                    showCentralModal('โหวตไม่ผ่าน!', `ทีมถูกปฏิเสธ (${game.rejectedCount}/5) ผู้นำเปลี่ยนคน`, 'fail', players[game.leaderIndex].name);
-                    renderProposalUI();
+                    
+                    showCentralModal('โหวตไม่ผ่าน!', 
+                                     `ทีมถูกปฏิเสธ (${game.rejectedCount}/5) ผู้นำเปลี่ยนคน`, 
+                                     'fail', players[game.leaderIndex].name);
+                    
+                    prepareProposePhase(); // Back to propose
+                    renderPlayersGrid(); // Update leader star
                 }
                 updateStatus();
             }
         }
 
-        // --- mission execution ---
+        // --- Mission Execution ---
         function prepareMission(){
-            missionLog.innerHTML='';
+            missionLog.innerHTML='รอกาลงคะแนนภารกิจ...';
             const teamNames = game.proposal.map(i=>players[i].name);
             missionPrompt.textContent = 'ทีม: '+teamNames.join(', ');
             game.missionVoteBuffer = [];
-            missionArea.style.display='block';
             
-            // *CRITICAL FIX*: Show MODAL for accepted team and set dismissal handler
-            showCentralModal('ทีมถูกรับรอง!', `ทีมได้รับคะแนน **${game.voteBuffer.filter(v=>v.choice).length} ผ่าน** และ **${playerCount - game.voteBuffer.filter(v=>v.choice).length} ไม่ผ่าน**`, 'success', players[game.proposal[0]].name);
-            modalDismissBtn.onclick = missionDismissHandler; // Set to custom handler to re-show mission content
+            // MODAL to initiate private mission voting
+            showCentralModal('ทีมถูกรับรอง!', 
+                             `ทีมได้รับคะแนน **${game.voteBuffer.filter(v=>v.choice).length} ผ่าน**`, 
+                             'success', players[game.proposal[0]].name);
+            modalDismissBtn.onclick = missionDismissHandler; // Use special handler for sequential mission
             
-            // Initial call to hide content, but then let the dismiss handler call showMissionChoiceForIndex(0)
-            missionContent.style.display = 'none'; // Ensure content is hidden on launch
             updateStatus();
         }
 
-        // *MODIFIED*: Added a parameter to control showing the modal when advancing internally
         function showMissionChoiceForIndex(k, showModal=true){
             if(k>=game.proposal.length) {
-                // Before finalizing, ensure content is visible for the results logging
                 missionContent.style.display = 'block'; 
                 return finalizeMission();
             }
 
             const playerIdx = game.proposal[k]; 
             const p = players[playerIdx];
+            const isMerlin = p.role.includes(rolesDef.SEER);
+            const isGood = p.role.includes(rolesDef.GOOD) || isMerlin;
 
-            // 1. Show Modal for Player Change (only if not the first player and forced by showModal)
             if (k > 0 && showModal) {
                  const prevPlayerName = game.missionVoteBuffer[k-1].player;
-                 showCentralModal('ตาถัดไป!', `คุณ **${prevPlayerName}** ลงคะแนนเสร็จแล้ว`, 'info', p.name);
+                 showCentralModal('ตาถัดไป!', `คุณ **${prevPlayerName}** ลงคะแนนเสร็จแล้ว`, 'player-turn', p.name); 
                  
-                 // CRITICAL FIX: Set the custom handler to re-show mission content when dismissed
                  modalDismissBtn.onclick = missionDismissHandler; 
-                 missionContent.style.display = 'none'; // Hide choices while modal is open
+                 missionContent.style.display = 'none'; 
                  return; 
             }
             
-            // 2. Render Choices for Current Player (or if k=0 after dismissal)
-            missionContent.style.display = 'block'; // Make sure content is visible for this player
-            missionChoices.innerHTML = `<div style="font-weight:700">ผู้เล่นปัจจุบัน: ${p.name}</div>`;
+            missionContent.style.display = 'block'; 
+            missionChoices.innerHTML = `<div style="font-weight:700">ผู้เล่นปัจจุบัน: ${p.name} (${p.role.includes('คนร้าย') ? 'คนร้าย' : (isMerlin ? 'ผู้หยั่งรู้' : 'คนดี')})</div>`;
             
-            // Function to handle vote and advance
             const handleVote = (voteType) => {
                 game.missionVoteBuffer.push({player:p.name, vote:voteType});
+                missionLog.innerHTML = `ลงคะแนนแล้ว: ${game.missionVoteBuffer.length}/${game.proposal.length}`;
                 
-                // If this is the last vote, finalize. Otherwise, show modal for next player.
                 if (game.missionVoteBuffer.length === game.proposal.length) {
                     finalizeMission();
                 } else {
-                    // Advance to the next player's turn (this will trigger the modal logic above)
                     showMissionChoiceForIndex(k + 1); 
                 }
             };
 
-            if(p.role===rolesDef.GOOD || p.role===rolesDef.SEER){
-                missionChoices.innerHTML += `<div style="margin-top:8px;color:var(--muted)">คุณเป็นคนดี: การเลือกจะเป็น **Success** อัตโนมัติ</div><div style="margin-top:8px"><button class='btn' id='autoSuccess'>ลงคะแนน Success</button></div>`;
+            if(isGood){ // รวม Merlin และคนดีทั่วไป
+                missionChoices.innerHTML += `<div style="margin-top:10px;color:var(--success);font-weight: 600;">คุณต้องลงคะแนน **Success** เท่านั้น</div><div style="margin-top:12px"><button class='btn' id='autoSuccess'><i class="fas fa-certificate"></i> ลงคะแนน Success</button></div>`;
                 document.getElementById('autoSuccess').addEventListener('click', ()=>handleVote('success'));
-            } else { // evil may choose
-                missionChoices.innerHTML += `<div style="margin-top:8px;color:var(--muted)">คุณเป็นคนร้าย: เลือก **Success** หรือ **Fail**</div><div style="display:flex;gap:10px;margin-top:12px"><button class='btn' id='mSuccess'>Success</button><button class='btn ghost' id='mFail'>Fail</button></div>`;
+            } else { // Evil (รวมถึง Assassin)
+                missionChoices.innerHTML += `<div style="margin-top:10px;color:var(--fail);font-weight: 600;">คุณสามารถเลือก **Success** หรือ **Fail**</div><div style="display:flex;gap:15px;margin-top:12px"><button class='btn' style="background-color: var(--success);" id='mSuccess'><i class="fas fa-certificate"></i> Success</button><button class='btn ghost' style="color: var(--fail); border-color: var(--fail);" id='mFail'><i class="fas fa-skull"></i> Fail</button></div>`;
                 document.getElementById('mSuccess').addEventListener('click', ()=>handleVote('success'));
                 document.getElementById('mFail').addEventListener('click', ()=>handleVote('fail'));
             }
@@ -962,68 +1022,71 @@
 
         function finalizeMission(){
             missionChoices.innerHTML='';
+            missionContent.style.display = 'none';
             const fails = game.missionVoteBuffer.filter(v=>v.vote==='fail').length;
             
             const needTwoFails = (playerCount>=7 && game.round===4);
             const missionFailed = needTwoFails ? (fails>=2) : (fails>=1);
             
-            missionLog.innerHTML = `ผลภารกิจ: Fail ${fails} → ${missionFailed? 'ล้มเหลว':'สำเร็จ'}`;
+            missionLog.innerHTML = `★ ผลภารกิจ: Fail **${fails}** → ${missionFailed? 'ล้มเหลว':'สำเร็จ'} (${needTwoFails?'ต้องการ 2 Fail':'ต้องการ 1 Fail'})`;
             log(`ภารกิจ ${game.round}: Fail ${fails} → ${missionFailed? 'ล้มเหลว':'สำเร็จ'}`);
             
             game.missionResults.push({round:game.round, failed:fails, missionFailed});
-            missionArea.style.display='none';
             
             const succCount = game.missionResults.filter(m=>!m.missionFailed).length;
             const failCount = game.missionResults.filter(m=>m.missionFailed).length;
             
             if (missionFailed) {
-                showCentralModal('ภารกิจล้มเหลว!', `รอบที่ ${game.round} ล้มเหลว! (Fail: ${fails} คะแนน)`, 'fail');
+                showCentralModal('ภารกิจล้มเหลว!', `รอบที่ ${game.round} ล้มเหลว! (Fail: ${fails} คะแนน) คนร้ายนำ ${failCount}-${succCount}`, 'fail');
             } else {
-                showCentralModal('ภารกิจสำเร็จ!', `รอบที่ ${game.round} สำเร็จ!`, 'success');
+                showCentralModal('ภารกิจสำเร็จ!', `รอบที่ ${game.round} สำเร็จ! คนดีนำ ${succCount}-${failCount}`, 'success');
             }
             
-            // Revert dismiss handler to default since mission is over
             modalDismissBtn.onclick = defaultModalDismissHandler;
 
 
             if(failCount>=3){ endGame('evil'); return; }
             if(succCount>=3){ triggerAssassination(); return; }
             
-            // else next round
+            // Next round
             game.round++; 
             game.leaderIndex = (game.leaderIndex+1)%playerCount; 
-            game.phase='propose'; 
+            
+            prepareProposePhase(); 
             renderPlayersGrid(); 
-            renderProposalUI(); 
             updateStatus();
             
-            // MODAL for next round start
             showCentralModal(`เริ่มภารกิจที่ ${game.round}`, 'ผู้นำคนใหม่พร้อมเสนอทีม', 'info', players[game.leaderIndex].name);
         }
 
-        // --- assassination ---
+        // --- Assassination ---
         function triggerAssassination(){
             log('คนดีชนะภารกิจ — เข้าสู่ช่วงนักฆ่า (Assassination)');
-            const assassin = players.find(p=>p.role===rolesDef.ASSASSIN);
+            const assassin = players.find(p=>p.role.includes(rolesDef.ASSASSIN));
             
-            // MODAL for assassination start
-            showCentralModal('คนดีชนะภารกิจ!', `นักฆ่า (**${assassin.name}**) โปรดปิดตาผู้เล่นอื่นทั้งหมดก่อนเลือกเป้าหมาย`, 'info');
+            showCentralModal('คนดีชนะภารกิจ!', 
+                             `นักฆ่า (**${assassin.name}**) โปรดปิดตาผู้เล่นอื่นทั้งหมดก่อนเลือกเป้าหมาย`, 
+                             'fail', assassin.name); // Use 'fail' to create suspense
+            modalDismissBtn.textContent = 'เลือกเป้าหมายสังหาร';
+
+            modalDismissBtn.onclick = () => {
+                centralModal.classList.remove('active');
+                const target = prompt(`นักฆ่า (${assassin.name}): คนดีชนะ! พิมพ์ชื่อผู้เล่นที่คุณคิดว่าเป็นผู้หยั่งรู้เพื่อชิงชัยชนะ`);
             
-            const target = prompt(`นักฆ่า (${assassin.name}): คนดีชนะ! พิมพ์ชื่อผู้เล่นที่คุณคิดว่าเป็นผู้หยั่งรู้เพื่อชิงชัยชนะ`);
-            
-            if(!target) { endGame('good_assassin_fail'); return; }
-            const targetPlayer = players.find(p=>p.name===target);
-            if(!targetPlayer){ 
-                showCentralModal('ชื่อผิดพลาด!', 'ไม่พบชื่อผู้เล่นที่ระบุ', 'fail');
-                endGame('good_assassin_fail'); 
-                return; 
-            }
-            log(`นักฆ่าเลือกสังหาร: ${targetPlayer.name} (บทบาท: ${targetPlayer.role})`);
-            
-            if(targetPlayer.role===rolesDef.SEER){ endGame('evil_assassin'); } else { endGame('good_assassin_fail'); }
+                if(!target) { endGame('good_assassin_fail'); return; }
+                const targetPlayer = players.find(p=>p.name===target);
+                if(!targetPlayer || targetPlayer.role.includes('คนร้าย')){ 
+                    log(`นักฆ่าเลือกสังหาร: ${target} (บทบาท: -) - เลือกพลาด`);
+                    endGame('good_assassin_fail'); 
+                    return; 
+                }
+                log(`นักฆ่าเลือกสังหาร: ${targetPlayer.name} (บทบาท: ${targetPlayer.role})`);
+                
+                if(targetPlayer.role.includes(rolesDef.SEER)){ endGame('evil_assassin'); } else { endGame('good_assassin_fail'); }
+            };
         }
 
-        // --- end game (MODIFIED for persistent display) ---
+        // --- End Game ---
         function endGame(mode){
             let text='';
             let winnerFaction = '';
@@ -1032,44 +1095,43 @@
             if(mode.startsWith('evil')) {
                 winnerFaction = 'ฝ่ายคนร้าย';
                 isEvilWin = true;
+                text = mode === 'evil_assassin' ? 'นักฆ่าสังหารผู้หยั่งรู้สำเร็จ! คนร้ายชนะ!' : 'ภารกิจล้มเหลว 3 ครั้ง! คนร้ายชนะ!';
             } else {
                 winnerFaction = 'ฝ่ายคนดี';
+                text = mode === 'good_assassin_fail' ? 'นักฆ่าสังหารพลาด! คนดีชนะ!' : 'ภารกิจสำเร็จ 3 ครั้ง! คนดีชนะ!';
             }
 
-            text = `ผู้ชนะคือ: ${winnerFaction}!`;
-            log('เกมจบ: '+text);
-            
+            log(`เกมจบ: ผู้ชนะคือ ${winnerFaction}!`);
             game.phase='ended'; 
             updateStatus();
 
             // Prepare Roster for display
-            let rosterHtml = players.map(p => 
-                `<div style="font-weight: 600; margin-top: 8px; color: ${p.role.includes('ร้าย') || p.role.includes('ฆ่า') ? 'var(--fail)' : 'var(--success)'};">
-                    <span style="display:inline-block; width: 100px; text-align: right; margin-right: 15px;">${p.name}</span>
-                    <span style="font-size: 18px; font-weight: 900;">— ${p.role}</span>
-                </div>`
-            ).join('');
+            let rosterHtml = players.map(p => {
+                const isEvilRole = p.role.includes('คนร้าย') || p.role.includes('นักฆ่า');
+                const color = isEvilRole ? 'var(--fail)' : 'var(--success)';
+                return `<div style="font-weight: 600; margin-top: 10px; color: ${color}; border-left: 3px solid ${color}; padding-left: 10px;">
+                    <span style="display:inline-block; width: 120px; text-align: left; margin-right: 15px; font-size: 16px;">${p.name}</span>
+                    <span style="font-size: 20px; font-weight: 900;">${p.role}</span>
+                </div>`;
+            }).join('');
             
             // Customize the central modal for end game
             modalContainer.className = `modal-content ${isEvilWin ? 'fail' : 'success'}`;
-            modalTitle.textContent = '★★ จบเกมแล้ว! ★★';
-            modalMessage.innerHTML = `<div style="font-size: 24px; font-weight: 700; margin-bottom: 20px;">${text}</div>
-                                      <div style="text-align: center; max-height: 280px; overflow-y: auto; padding: 15px; border: 2px dashed #ccc; border-radius: 8px; background: #f9f9f9;">
-                                          <div style="font-weight: 700; font-size: 16px; margin-bottom: 15px; color: var(--text-dark);">— การเปิดเผยบทบาททั้งหมด —</div>
+            modalIcon.innerHTML = isEvilWin ? `<i class="fas fa-skull-crossbones"></i>` : `<i class="fas fa-crown"></i>`;
+            modalTitle.textContent = `★★ ${winnerFaction} ชนะ! ★★`;
+            modalMessage.innerHTML = `<div style="font-size: 22px; font-weight: 700; margin-bottom: 25px;">${text}</div>
+                                      <div style="text-align: left; max-height: 280px; overflow-y: auto; padding: 15px; border: 2px dashed var(--border); border-radius: 10px; background: #f0f0f0;">
+                                          <div style="font-weight: 800; font-size: 18px; margin-bottom: 15px; color: var(--muted); text-align: center;">— ROSTER เปิดเผยบทบาททั้งหมด —</div>
                                           ${rosterHtml}
                                       </div>`;
             
-            // *CRITICAL CHANGE: Modify the button to be a persistent reset button*
             modalDismissBtn.textContent = '★ เริ่มเกมใหม่ ★';
-            modalDismissBtn.style.display = 'inline-block';
-            modalDismissBtn.onclick = () => { 
-                location.reload(); 
-            }; // Override the handler to reload page permanently
+            modalDismissBtn.onclick = () => { location.reload(); }; 
             
-            centralModal.classList.add('active'); // Show the modal persistently
+            centralModal.classList.add('active'); 
         }
 
-        // --- helpers ---
+        // --- Helpers ---
         function log(msg){ 
             const g = voteLogGlobal; 
             const logEntry = document.createElement('div');
@@ -1079,8 +1141,8 @@
         }
 
         // initial render
+        showView('setupView');
         updateStatus();
     </script>
 </body>
 </html>
-
