@@ -327,8 +327,8 @@
         <header>
             <h1>AVALON</h1>
             <div>
-                <div style="font-size:20px;font-weight: 700; color: var(--text-dark);">คนเมาห้ามเล่น</div>
-                <div style="color:var(--muted);font-size:14px">บอร์ดเกมสร้างโดยนาธารสุดหล่อ</div>
+                <div style="font-size:20px;font-weight: 700; color: var(--text-dark);">The Card of Destiny</div>
+                <div style="color:var(--muted);font-size:14px">บอร์ดเกมออฟไลน์สำหรับอุปกรณ์เดียว</div>
             </div>
         </header>
 
@@ -457,7 +457,7 @@
         </div>
 
         <footer>
-            <div style="margin-top:30px; text-align: center; color: var(--muted); font-size: 12px;">เต็ม 10 ให้ 7 เจ็ดว่าดัดจัดว่าเด็ด มั้วะ</div>
+            <div style="margin-top:30px; text-align: center; color: var(--muted); font-size: 12px;">Avalon Offline Game UI Redesign (Light Mode & Modal Flow Theme)</div>
         </footer>
     </div>
 
@@ -521,14 +521,18 @@
         const nextPlayerStatus = document.getElementById('nextPlayerStatus');
         const nextPlayerNameDisplay = document.getElementById('nextPlayerNameDisplay');
 
-        // Close modal listener (for generic modal)
-        modalDismissBtn.addEventListener('click', () => {
-             centralModal.classList.remove('active');
-        });
-
         // --------------------------
         // Central Modal Notification (Enhanced for Player Change)
         // --------------------------
+        
+        // *NEW: Default Modal Dismiss Handler and Setup*
+        const defaultModalDismissHandler = () => {
+             centralModal.classList.remove('active');
+             modalDismissBtn.textContent = 'ดำเนินการต่อ'; // Reset text
+             modalDismissBtn.onclick = defaultModalDismissHandler; // Reset handler
+        };
+        modalDismissBtn.onclick = defaultModalDismissHandler; // Set default handler initially
+
         function showCentralModal(title, message, type = 'info', playerTurn = null) {
             let actualType = type;
             if (playerTurn) {
@@ -541,10 +545,14 @@
             modalMessage.innerHTML = message; // Use innerHTML to allow for strong tags
             centralModal.classList.add('active');
             
-            // Auto dismiss only for success/fail/end game
+            // Set button to default action and text (will be overridden by endGame if called later)
+            modalDismissBtn.textContent = 'ดำเนินการต่อ';
+            modalDismissBtn.onclick = defaultModalDismissHandler;
+
             const isCritical = (type.includes('success') || type.includes('fail') || title.includes('จบเกม'));
             
-            if (isCritical) {
+            // In non-endgame scenario, only auto dismiss if critical, otherwise rely on user click
+            if (isCritical && !title.includes('จบเกม')) {
                  modalDismissBtn.style.display = 'inline-block';
                  setTimeout(() => centralModal.classList.remove('active'), 5000);
             } else {
@@ -846,7 +854,6 @@
                     game.votesCollected=0; game.voteBuffer=[]; game.proposal=[]; 
                     
                     if(game.rejectedCount>=5){ // 5 rejections -> evil wins
-                        showCentralModal('คนร้ายชนะอัตโนมัติ!', `โหวตถูกปฏิเสธ 5 ครั้ง!`, 'fail');
                         endGame('evil_auto'); return;
                     }
                     
@@ -873,12 +880,10 @@
         function showMissionChoiceForIndex(k){
             if(k>=game.proposal.length) return finalizeMission();
 
-            // Check if this is the start of a new mission phase (k=0) 
-            // OR if a player is finishing their turn (k>0) and modal is not yet closed
+            // Check if a player is finishing their turn (k>0) and modal is not yet closed
             if (k > 0 && centralModal.classList.contains('active')) {
                  showCentralModal('ตาถัดไป!', `คุณ **${game.missionVoteBuffer[k-1].player}** ลงคะแนนเสร็จแล้ว`, 'info', players[game.proposal[k]].name);
             }
-            // Logic for k=0 is handled by the Modal from submitProposalBtn click
             
             const playerIdx = game.proposal[k]; const p = players[playerIdx];
             
@@ -950,11 +955,11 @@
             
             const target = prompt(`นักฆ่า (${assassin.name}): คนดีชนะ! พิมพ์ชื่อผู้เล่นที่คุณคิดว่าเป็นผู้หยั่งรู้เพื่อชิงชัยชนะ`);
             
-            if(!target) { endGame('good'); return; }
+            if(!target) { endGame('good_assassin_fail'); return; }
             const targetPlayer = players.find(p=>p.name===target);
             if(!targetPlayer){ 
                 showCentralModal('ชื่อผิดพลาด!', 'ไม่พบชื่อผู้เล่นที่ระบุ', 'fail');
-                endGame('good'); 
+                endGame('good_assassin_fail'); 
                 return; 
             }
             log(`นักฆ่าเลือกสังหาร: ${targetPlayer.name} (บทบาท: ${targetPlayer.role})`);
@@ -962,23 +967,50 @@
             if(targetPlayer.role===rolesDef.SEER){ endGame('evil_assassin'); } else { endGame('good_assassin_fail'); }
         }
 
-        // --- end game ---
+        // --- end game (MODIFIED) ---
         function endGame(mode){
             let text='';
-            let roster = players.map(p=>`${p.name} — ${p.role}`).join('\n');
-
-            if(mode.startsWith('evil')) {
-                text='ฝ่ายคนร้ายชนะ!';
-                showCentralModal('จบเกม: คนร้ายชนะ!', `ชัยชนะเป็นของเหล่าคนร้าย! บทบาท:\n${roster}`, 'fail');
-            }
-            else {
-                text='ฝ่ายคนดีชนะ!';
-                showCentralModal('จบเกม: คนดีชนะ!', `ความดีงามชนะแล้ว! บทบาท:\n${roster}`, 'success');
-            }
+            let winnerFaction = '';
+            let isEvilWin = false;
             
+            if(mode.startsWith('evil')) {
+                winnerFaction = 'ฝ่ายคนร้าย';
+                isEvilWin = true;
+            } else {
+                winnerFaction = 'ฝ่ายคนดี';
+            }
+
+            text = `ผู้ชนะคือ: ${winnerFaction}!`;
             log('เกมจบ: '+text);
             
-            game.phase='ended'; updateStatus();
+            game.phase='ended'; 
+            updateStatus();
+
+            // Prepare Roster for display
+            let rosterHtml = players.map(p => 
+                `<div style="font-weight: 600; margin-top: 8px; color: ${p.role.includes('ร้าย') || p.role.includes('ฆ่า') ? 'var(--fail)' : 'var(--success)'};">
+                    <span style="display:inline-block; width: 100px; text-align: right; margin-right: 15px;">${p.name}</span>
+                    <span style="font-size: 18px; font-weight: 900;">— ${p.role}</span>
+                </div>`
+            ).join('');
+            
+            // Customize the central modal for end game
+            modalContainer.className = `modal-content ${isEvilWin ? 'fail' : 'success'}`;
+            modalTitle.textContent = '★★ จบเกมแล้ว! ★★';
+            modalMessage.innerHTML = `<div style="font-size: 24px; font-weight: 700; margin-bottom: 20px;">${text}</div>
+                                      <div style="text-align: center; max-height: 280px; overflow-y: auto; padding: 15px; border: 2px dashed #ccc; border-radius: 8px; background: #f9f9f9;">
+                                          <div style="font-weight: 700; font-size: 16px; margin-bottom: 15px; color: var(--text-dark);">— การเปิดเผยบทบาททั้งหมด —</div>
+                                          ${rosterHtml}
+                                      </div>`;
+            
+            // Modify the button to be a reset button (persistent until clicked)
+            modalDismissBtn.textContent = '★ เริ่มเกมใหม่ ★';
+            modalDismissBtn.style.display = 'inline-block';
+            modalDismissBtn.onclick = () => { 
+                location.reload(); 
+            }; // Override the handler to reload page
+            
+            centralModal.classList.add('active'); // Show the modal persistently
         }
 
         // --- helpers ---
@@ -995,4 +1027,3 @@
     </script>
 </body>
 </html>
-
