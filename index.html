@@ -149,43 +149,80 @@
         .role-desc .secret-info.evil { background: rgba(239, 68, 68, 0.1); color: var(--fail); border: 1px solid var(--fail); }
 
         /* ---------------------------------- */
-        /* 2. Game area & Grids */
+        /* 2. Player Avatar (วงกลม) */
         /* ---------------------------------- */
-        
-        /* Player Pill Style - Clean Pill */
-        .pill{
-            padding:12px 18px;
-            border-radius:6px;
-            background:#f0f0f0; /* Light grey for pill */
-            border:1px solid var(--border);
-            color: var(--text-dark);
-            min-width:120px;
-            transition: all 0.2s;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .players-grid, .proposalGrid{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* เพิ่มช่องว่างระหว่างวงกลม */
+            justify-content: flex-start;
+            padding-top: 10px;
         }
-        .pill:hover { background: #e0e0e0; }
-        
-        /* Leader (Blue Pill) */
-        .leader{
-            background: var(--accent-blue);
-            color: var(--text-light); /* Ensure text stands out on bright blue */
-            font-weight: 800;
-            border: 2px solid var(--accent-blue-light);
-            box-shadow:0 0 10px rgba(37, 99, 235, 0.4);
-        }
-        .selected{
-            outline:4px solid var(--success); /* Use success border for proposal */
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
-            background: rgba(16, 185, 129, 0.1); 
-            border-color: var(--success);
-        }
-        
-        /* Log Style (Removed, but keeping the class for structural integrity if needed later) */
-        /* .log{} */
 
-        /* Mission Tracker - New Design */
+        .avatar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            width: 80px; /* กำหนดความกว้างรวมของทั้งชุด */
+        }
+        
+        .avatar {
+            width: 65px; 
+            height: 65px;
+            line-height: 65px;
+            border-radius: 50%; /* วงกลม */
+            background: #d1d5db; /* สีพื้นหลังเริ่มต้น */
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 5px;
+            border: 3px solid #d1d5db;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden; /* ซ่อนข้อความเกิน */
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+            padding: 0 5px;
+        }
+        
+        /* Player Name below avatar */
+        .avatar-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-dark);
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .avatar-container:hover .avatar {
+            background: #bdbdbd;
+        }
+
+        /* Leader (Blue Ring) */
+        .leader .avatar {
+            border: 3px solid var(--accent-blue);
+            background: var(--accent-blue);
+            color: var(--text-light);
+            box-shadow:0 0 10px rgba(37, 99, 235, 0.6);
+        }
+        .leader .avatar-name {
+            font-weight: 800;
+            color: var(--accent-blue);
+        }
+
+        /* Selected (Green Ring for Proposal) */
+        .selected .avatar {
+            border: 3px solid var(--success); 
+            background: rgba(16, 185, 129, 0.1); 
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Mission Tracker (Existing style, kept for reference) */
         .mission-tracker {
             display: flex;
             justify-content: space-around;
@@ -720,16 +757,37 @@
             renderMissionTracker();
         }
 
+        /* ---------------------------------- */
+        /* ADJUSTED: Render Players Grid to use Avatar */
+        /* ---------------------------------- */
         function renderPlayersGrid(){
             playersGrid.innerHTML='';
             players.forEach(p=>{
-                const el = document.createElement('div'); el.className='pill'; el.id='player-'+p.id; el.textContent=p.name; 
+                const el = document.createElement('div'); el.className='avatar-container'; el.id='player-cont-'+p.id;
+                
+                // Avatar circle
+                const avatar = document.createElement('div');
+                avatar.className='avatar';
+                // Show a truncated name in the avatar if long, otherwise full name
+                const avatarText = p.name.length > 5 ? p.name.substring(0, 4) + '..' : p.name;
+                avatar.textContent = avatarText;
+                
+                // Name below the avatar
+                const nameText = document.createElement('div');
+                nameText.className = 'avatar-name';
+                nameText.textContent = p.name;
+
+                el.appendChild(avatar);
+                el.appendChild(nameText);
+                
                 if(players.indexOf(p)===game.leaderIndex) el.classList.add('leader');
                 el.addEventListener('click', ()=>{ if(game.phase==='leader_action') toggleProposal(p.id); });
                 playersGrid.appendChild(el);
             });
             updateStatus();
         }
+        /* ---------------------------------- */
+
 
         // --- Role Reveal Flow ---
         function setupRevealFlow(){
@@ -831,21 +889,41 @@
             updateStatus();
         });
 
+        /* ---------------------------------- */
+        /* ADJUSTED: Render Proposal UI to use Avatar */
+        /* ---------------------------------- */
         function renderProposalUI(){
             proposeArea.style.display='block'; proposalGrid.innerHTML=''; currentProposal = new Set();
             
             players.forEach(p=>{
-                const pill = document.createElement('div'); pill.className='pill'; pill.textContent=p.name; pill.id='prop-'+p.id; 
-                pill.addEventListener('click', ()=>{ toggleProposal(p.id); });
-                proposalGrid.appendChild(pill);
+                const el = document.createElement('div'); el.className='avatar-container'; el.id='prop-cont-'+p.id;
+                
+                // Avatar circle
+                const avatar = document.createElement('div');
+                avatar.className='avatar';
+                const avatarText = p.name.length > 5 ? p.name.substring(0, 4) + '..' : p.name;
+                avatar.textContent = avatarText;
+
+                // Name below the avatar
+                const nameText = document.createElement('div');
+                nameText.className = 'avatar-name';
+                nameText.textContent = p.name;
+
+                el.appendChild(avatar);
+                el.appendChild(nameText);
+                
+                el.addEventListener('click', ()=>{ toggleProposal(p.id); });
+                proposalGrid.appendChild(el);
             });
             updateStatus();
         }
+        /* ---------------------------------- */
+
 
         function toggleProposal(id){
             if(game.phase!=='leader_action') return;
             
-            const el = document.getElementById('prop-'+id);
+            const el = document.getElementById('prop-cont-'+id);
             if(currentProposal.has(id)){ 
                 currentProposal.delete(id); 
                 el.classList.remove('selected'); 
