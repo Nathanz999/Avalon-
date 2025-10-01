@@ -457,7 +457,7 @@
         </div>
 
         <footer>
-            <div style="margin-top:30px; text-align: center; color: var(--muted); font-size: 12px;">เต็ม 10 ให้ 7 เจ็ดว่าดัดจัดว่าเด็ด มั้วะ </div>
+            <div style="margin-top:30px; text-align: center; color: var(--muted); font-size: 12px;">เต็ม 10 ให้ 7 เจ็ดว่าดัดจัดว่าเด็ด มั้วะ</div>
         </footer>
     </div>
 
@@ -526,10 +526,18 @@
         // --------------------------
         
         // *NEW: Default Modal Dismiss Handler and Setup*
+        // Handler นี้ถูกเรียกเมื่อกดปุ่ม 'ดำเนินการต่อ' ทั่วไป
         const defaultModalDismissHandler = () => {
              centralModal.classList.remove('active');
              modalDismissBtn.textContent = 'ดำเนินการต่อ'; // Reset text
              modalDismissBtn.onclick = defaultModalDismissHandler; // Reset handler
+             
+             // *CRITICAL FOR MISSION PHASE*: ตรวจสอบว่าหลังจากปิด Modal แล้ว เป็นตาของ Mission หรือไม่
+             if (game.phase === 'mission' && game.missionVoteBuffer.length < game.proposal.length) {
+                 const nextIndex = game.missionVoteBuffer.length;
+                 // ใช้ setTimeout 0 เพื่อให้แน่ใจว่า Modal ปิดก่อนที่จะเรียกโชว์ตัวเลือกคนถัดไป
+                 setTimeout(() => showMissionChoiceForIndex(nextIndex, false), 0);
+             }
         };
         modalDismissBtn.onclick = defaultModalDismissHandler; // Set default handler initially
 
@@ -545,16 +553,14 @@
             modalMessage.innerHTML = message; // Use innerHTML to allow for strong tags
             centralModal.classList.add('active');
             
-            // Set button to default action and text
+            // Set button to default action and text (unless overridden by endGame)
             modalDismissBtn.textContent = 'ดำเนินการต่อ';
             modalDismissBtn.onclick = defaultModalDismissHandler;
 
             const isCritical = (type.includes('success') || type.includes('fail') || title.includes('จบเกม'));
             
-            // In non-endgame scenario, only auto dismiss if critical, otherwise rely on user click
             if (isCritical && !title.includes('จบเกม')) {
                  modalDismissBtn.style.display = 'inline-block';
-                 // NOTE: Removed setTimeout here to ensure only a single logic controls dismissal.
             } else {
                  modalDismissBtn.style.display = 'inline-block';
             }
@@ -876,35 +882,48 @@
             showMissionChoiceForIndex(0);
             updateStatus();
         }
-
-        function showMissionChoiceForIndex(k){
+        
+        // *MODIFIED*: Added a parameter to control showing the modal when advancing internally
+        function showMissionChoiceForIndex(k, showModal=true){
             if(k>=game.proposal.length) return finalizeMission();
 
-            // Check if a player is finishing their turn (k>0) and modal is not yet closed
-            if (k > 0 && centralModal.classList.contains('active')) {
-                 showCentralModal('ตาถัดไป!', `คุณ **${game.missionVoteBuffer[k-1].player}** ลงคะแนนเสร็จแล้ว`, 'info', players[game.proposal[k]].name);
+            const playerIdx = game.proposal[k]; 
+            const p = players[playerIdx];
+
+            // 1. Show Modal for Player Change (only if not the first player and not internal advance)
+            if (k > 0 && showModal) {
+                 const prevPlayerName = game.missionVoteBuffer[k-1].player;
+                 showCentralModal('ตาถัดไป!', `คุณ **${prevPlayerName}** ลงคะแนนเสร็จแล้ว`, 'info', p.name);
+                 
+                 // Clear the choices now, then let the defaultModalDismissHandler call this function again
+                 // (with k as the next index) to render the next player's choices.
+                 missionChoices.innerHTML = '<div style="font-weight:700">ส่งเครื่องให้คนถัดไป...</div>';
+                 return; 
             }
             
-            const playerIdx = game.proposal[k]; const p = players[playerIdx];
-            
+            // 2. Render Choices for Current Player (or if k=0)
             missionChoices.innerHTML = `<div style="font-weight:700">ผู้เล่นปัจจุบัน: ${p.name}</div>`;
             
+            // Function to handle vote and advance
+            const handleVote = (voteType) => {
+                game.missionVoteBuffer.push({player:p.name, vote:voteType});
+                
+                // If this is the last vote, finalize. Otherwise, show modal for next player.
+                if (game.missionVoteBuffer.length === game.proposal.length) {
+                    finalizeMission();
+                } else {
+                    // Advance to the next player's turn (this will trigger the modal logic above)
+                    showMissionChoiceForIndex(k + 1); 
+                }
+            };
+
             if(p.role===rolesDef.GOOD || p.role===rolesDef.SEER){
                 missionChoices.innerHTML += `<div style="margin-top:8px;color:var(--muted)">คุณเป็นคนดี: การเลือกจะเป็น **Success** อัตโนมัติ</div><div style="margin-top:8px"><button class='btn' id='autoSuccess'>ลงคะแนน Success</button></div>`;
-                document.getElementById('autoSuccess').addEventListener('click', ()=>{ 
-                    game.missionVoteBuffer.push({player:p.name, vote:'success'}); 
-                    showMissionChoiceForIndex(k+1); 
-                });
+                document.getElementById('autoSuccess').addEventListener('click', ()=>handleVote('success'));
             } else { // evil may choose
                 missionChoices.innerHTML += `<div style="margin-top:8px;color:var(--muted)">คุณเป็นคนร้าย: เลือก **Success** หรือ **Fail**</div><div style="display:flex;gap:10px;margin-top:12px"><button class='btn' id='mSuccess'>Success</button><button class='btn ghost' id='mFail'>Fail</button></div>`;
-                document.getElementById('mSuccess').addEventListener('click', ()=>{ 
-                    game.missionVoteBuffer.push({player:p.name, vote:'success'}); 
-                    showMissionChoiceForIndex(k+1); 
-                });
-                document.getElementById('mFail').addEventListener('click', ()=>{ 
-                    game.missionVoteBuffer.push({player:p.name, vote:'fail'}); 
-                    showMissionChoiceForIndex(k+1); 
-                });
+                document.getElementById('mSuccess').addEventListener('click', ()=>handleVote('success'));
+                document.getElementById('mFail').addEventListener('click', ()=>handleVote('fail'));
             }
         }
 
@@ -1027,4 +1046,3 @@
     </script>
 </body>
 </html>
-
