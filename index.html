@@ -327,8 +327,8 @@
         <header>
             <h1>AVALON</h1>
             <div>
-                <div style="font-size:20px;font-weight: 700; color: var(--text-dark);">คนเมาห้ามเล่น</div>
-                <div style="color:var(--muted);font-size:14px">บอร์ดเกมสร้างโดย 9thanz </div>
+                <div style="font-size:20px;font-weight: 700; color: var(--text-dark);">The Card of Destiny</div>
+                <div style="color:var(--muted);font-size:14px">บอร์ดเกมออฟไลน์สำหรับอุปกรณ์เดียว</div>
             </div>
         </header>
 
@@ -416,7 +416,7 @@
 
                     <div id="missionArea" style="margin-top:20px;display:none">
                         <div style="font-size:14px;color:var(--text-dark); font-weight: 600;">ลงคะแนนภารกิจ (ส่วนตัว)</div>
-                        <div style="margin-top:10px; padding: 15px; border: 1px dashed var(--muted); border-radius: 8px; background: #f0f4f7;">
+                        <div id="missionContent" style="margin-top:10px; padding: 15px; border: 1px dashed var(--muted); border-radius: 8px; background: #f0f4f7;">
                             <div style="font-weight:700; font-size: 18px;" id="missionPrompt">ทีม: -</div>
                             <div style="margin-top:12px" id="missionChoices"></div>
                         </div>
@@ -457,7 +457,7 @@
         </div>
 
         <footer>
-            <div style="margin-top:30px; text-align: center; color: var(--muted); font-size: 12px;">เต็ม 10 ให้ 7 เจ็ดว่าดัดจัดว่าเด็ด มั้วะ</div>
+            <div style="margin-top:30px; text-align: center; color: var(--muted); font-size: 12px;">Avalon Offline Game UI Redesign (Light Mode & Modal Flow Theme)</div>
         </footer>
     </div>
 
@@ -498,6 +498,7 @@
         const voteLog = document.getElementById('voteLog');
         const voteLogGlobal = document.getElementById('gameLog');
         const missionArea = document.getElementById('missionArea');
+        const missionContent = document.getElementById('missionContent'); // New element to control visibility
         const missionPrompt = document.getElementById('missionPrompt');
         const missionChoices = document.getElementById('missionChoices');
         const roundInfo = document.getElementById('roundInfo');
@@ -564,7 +565,26 @@
             } else {
                  modalDismissBtn.style.display = 'inline-block';
             }
+            
+            // *NEW CRITICAL FIX*: Hide the mission content when showing the modal if in mission phase
+            if (game.phase === 'mission') {
+                missionContent.style.display = 'none';
+            }
         }
+        
+        // *NEW CRITICAL FIX*: Override dismissal to re-show mission content
+        const missionDismissHandler = () => {
+            centralModal.classList.remove('active');
+            modalDismissBtn.textContent = 'ดำเนินการต่อ';
+            modalDismissBtn.onclick = defaultModalDismissHandler; 
+            
+            if (game.phase === 'mission' && game.missionVoteBuffer.length < game.proposal.length) {
+                const nextIndex = game.missionVoteBuffer.length;
+                // Force show mission content immediately before rendering choices
+                missionContent.style.display = 'block'; 
+                showMissionChoiceForIndex(nextIndex, false);
+            }
+        };
 
         // Mission Tracker
         function renderMissionTracker() {
@@ -852,9 +872,11 @@
                 
                 // decide
                 if(yes>no){ // accepted
-                    game.proposalAccepted=true; game.rejectedCount=0; game.phase='mission'; voteArea.style.display='none'; missionArea.style.display='block'; prepareMission();
-                    // MODAL for accepted team
-                    showCentralModal('ทีมถูกรับรอง!', `ทีมได้รับคะแนน **${yes} ผ่าน** และ **${no} ไม่ผ่าน**`, 'success', players[game.proposal[0]].name);
+                    game.proposalAccepted=true; game.rejectedCount=0; game.phase='mission'; voteArea.style.display='none'; missionArea.style.display='block'; 
+                    
+                    // *CRITICAL FIX: Call prepareMission which now handles the initial modal*
+                    prepareMission();
+                    
                 } else { // rejected
                     game.proposalAccepted=false; game.rejectedCount++; game.leaderIndex = (game.leaderIndex+1)%playerCount; game.phase='propose'; voteArea.style.display='none'; renderPlayersGrid();
                     game.votesCollected=0; game.voteBuffer=[]; game.proposal=[]; 
@@ -879,29 +901,40 @@
             missionPrompt.textContent = 'ทีม: '+teamNames.join(', ');
             game.missionVoteBuffer = [];
             missionArea.style.display='block';
-            showMissionChoiceForIndex(0);
+            
+            // *CRITICAL FIX*: Show MODAL for accepted team and set dismissal handler
+            showCentralModal('ทีมถูกรับรอง!', `ทีมได้รับคะแนน **${game.voteBuffer.filter(v=>v.choice).length} ผ่าน** และ **${playerCount - game.voteBuffer.filter(v=>v.choice).length} ไม่ผ่าน**`, 'success', players[game.proposal[0]].name);
+            modalDismissBtn.onclick = missionDismissHandler; // Set to custom handler to re-show mission content
+            
+            // Initial call to hide content, but then let the dismiss handler call showMissionChoiceForIndex(0)
+            missionContent.style.display = 'none'; // Ensure content is hidden on launch
             updateStatus();
         }
-        
+
         // *MODIFIED*: Added a parameter to control showing the modal when advancing internally
         function showMissionChoiceForIndex(k, showModal=true){
-            if(k>=game.proposal.length) return finalizeMission();
+            if(k>=game.proposal.length) {
+                // Before finalizing, ensure content is visible for the results logging
+                missionContent.style.display = 'block'; 
+                return finalizeMission();
+            }
 
             const playerIdx = game.proposal[k]; 
             const p = players[playerIdx];
 
-            // 1. Show Modal for Player Change (only if not the first player and not internal advance)
+            // 1. Show Modal for Player Change (only if not the first player and forced by showModal)
             if (k > 0 && showModal) {
                  const prevPlayerName = game.missionVoteBuffer[k-1].player;
                  showCentralModal('ตาถัดไป!', `คุณ **${prevPlayerName}** ลงคะแนนเสร็จแล้ว`, 'info', p.name);
                  
-                 // Clear the choices now, then let the defaultModalDismissHandler call this function again
-                 // (with k as the next index) to render the next player's choices.
-                 missionChoices.innerHTML = '<div style="font-weight:700">ส่งเครื่องให้คนถัดไป...</div>';
+                 // CRITICAL FIX: Set the custom handler to re-show mission content when dismissed
+                 modalDismissBtn.onclick = missionDismissHandler; 
+                 missionContent.style.display = 'none'; // Hide choices while modal is open
                  return; 
             }
             
-            // 2. Render Choices for Current Player (or if k=0)
+            // 2. Render Choices for Current Player (or if k=0 after dismissal)
+            missionContent.style.display = 'block'; // Make sure content is visible for this player
             missionChoices.innerHTML = `<div style="font-weight:700">ผู้เล่นปัจจุบัน: ${p.name}</div>`;
             
             // Function to handle vote and advance
@@ -948,6 +981,10 @@
             } else {
                 showCentralModal('ภารกิจสำเร็จ!', `รอบที่ ${game.round} สำเร็จ!`, 'success');
             }
+            
+            // Revert dismiss handler to default since mission is over
+            modalDismissBtn.onclick = defaultModalDismissHandler;
+
 
             if(failCount>=3){ endGame('evil'); return; }
             if(succCount>=3){ triggerAssassination(); return; }
