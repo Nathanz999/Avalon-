@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="th">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+    <title>Avalon — Light Mode & Modal Flow (Prompt Font)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ---------------------------------- */
+        /* 1. Base & Theme - Light Mode */
+        /* ---------------------------------- */
+        :root {
+            --bg: #f4f7fa; /* Light Grey/Off-White Background */
+            --card: #ffffff; /* Pure White Card */
+            --text-dark: #1f2937; /* Dark Text */
+            --accent-blue: #3b82f6; /* Electric Blue Accent */
+            --accent-blue-light: #60a5fa;
+            --muted: #6b7280; /* Muted Grey */
+            --success: #10b981; /* Emerald Green */
+            --fail: #ef4444; /* Standard Red */
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --font-main: 'Prompt', sans-serif; /* New Clean Font */
+        }
+        
+        *{box-sizing:border-box;font-family: var(--font-main);} /* Applied new font */
+        
+        html,body{
+            height:100%;
+            margin:0;
+            background: var(--bg);
+            color:var(--text-dark);
+            overflow-x: hidden;
+            letter-spacing: 0.2px;
+        }
+        .wrap{max-width:1200px;margin:24px auto;padding:18px}
+        header{display:flex;align-items:center;gap:16px; margin-bottom: 24px;}
+        header h1{margin:0;font-size:32px; font-weight: 900; color: var(--accent-blue); text-shadow: none;} /* Removed text-shadow */
+        
+        /* Card Style - White background, clean shadow */
+        .card{
+            background: var(--card);
+            padding:24px;
+            border-radius:10px;
+            box-shadow:var(--shadow-card);
+            border: 1px solid #e5e7eb; 
+            transition: all 0.3s;
+        }
+        
+        .controls{display:flex;gap:30px;flex-wrap:wrap;margin-top:12px}
+        .panel{flex:1;min-width:300px}
+        /* Labels are dark text with clear font weight */
+        label{display:block;font-size:14px;color:var(--text-dark);margin-bottom:6px; font-weight: 600; text-transform: uppercase;}
+        
+        /* Inputs/Selects - Clean white background, dark border */
+        input[type=text], select{
+            width:100%;
+            padding:12px;
+            border-radius:6px;
+            border:1px solid #d1d5db;
+            background:var(--card);
+            color:var(--text-dark);
+            transition: border-color 0.2s;
+        }
+        input[type=text]:focus, select:focus{border-color:var(--accent-blue); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);}
+        
+        .row{display:flex;gap:8px}
+        
+        /* Buttons - Blue Accent */
+        .btn{
+            background:var(--accent-blue);
+            border:none;
+            padding:12px 20px;
+            border-radius:6px;
+            color:white;
+            font-weight:600; /* Adjusted font weight for better Prompt display */
+            cursor:pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+            min-width: 120px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .btn:hover {background: var(--accent-blue-light); transform: translateY(-1px); box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);}
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; background: #e5e7eb; color: var(--muted);}
+        
+        .btn.ghost{
+            background:transparent;
+            border:2px solid var(--muted);
+            color: var(--muted);
+            box-shadow: none;
+        }
+        .btn.ghost:hover {background: #e5e7eb; transform: none; box-shadow: none; color: var(--text-dark); border-color: var(--text-dark);}
+        
+        /* Player Input List */
+        .players-list{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
+        .player-input{flex-basis: calc(50% - 5px);}
+
+        /* Status Card - Game Info */
+        .status-card{
+          margin-top:18px;
+          padding:24px;
+          border-radius:10px;
+          background:#f0f4f7; 
+          border: 1px solid var(--accent-blue-light);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          text-align: center;
+        }
+        .status-text{font-size: 22px; font-weight: 700; color: var(--accent-blue);}
+        .status-text:before { content: "• "; color: var(--accent-blue-light); }
+
+
+        /* Role Card - Theatrical Reveal */
+        /* Role Card inside Modal */
+        .role-modal-content{
+            min-height:280px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:12px;
+            border-radius:10px;
+            padding:40px 24px; /* Reduced padding slightly */
+            background: #fcfcfc;
+            border: 3px solid;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            min-width: 450px; /* Ensure it looks like a modal */
+        }
+
+        /* Generic Modal (used for central game info) */
+        .modal-content{
+            background: var(--card);
+            padding: 50px;
+            border-radius: 15px;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+            border: 5px solid;
+            min-width: 450px;
+        }
+
+
+        .role-name{font-size:48px;font-weight:900;text-transform: uppercase; margin-bottom: 5px;}
+        .role-title{font-size:16px;color:var(--muted);font-weight: 600;}
+
+        /* Role Color Classes */
+        .role-good { border-color: var(--success); color: var(--success); text-shadow: none; }
+        .role-evil { border-color: var(--fail); color: var(--fail); text-shadow: none; }
+
+        .role-desc{font-size:15px;color:var(--text-dark);max-width:420px;text-align:center; margin-top: 10px;}
+        .role-desc .secret-info { margin-top: 15px; padding: 10px; border-radius: 6px; font-weight: 600; }
+        .role-desc .secret-info.good { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .role-desc .secret-info.evil { background: rgba(239, 68, 68, 0.15); color: var(--fail); }
+
+        /* ---------------------------------- */
+        /* 2. Game area & Grids */
+        /* ---------------------------------- */
+        .game-area{display:grid;grid-template-columns:1fr 380px;gap:30px;margin-top:30px}
+        .players-grid{display:flex;flex-wrap:wrap;gap:10px}
+        
+        /* Player Pill Style - Clean Pill */
+        .pill{
+            padding:12px 18px;
+            border-radius:4px;
+            background:#f0f4f7;
+            border:1px solid #d1d5db;
+            color: var(--text-dark);
+            min-width:120px;
+            transition: all 0.2s;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .pill:hover { background: #e5e7eb; }
+        
+        /* Leader (Blue Pill) */
+        .leader{
+            background: var(--accent-blue);
+            color: white;
+            font-weight: 700;
+            border: 2px solid var(--text-dark);
+            box-shadow:0 0 10px rgba(59, 130, 246, 0.5);
+        }
+        .selected{
+            outline:4px solid var(--fail); 
+            box-shadow: 0 0 10px var(--fail);
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Log Style - History Scroll */
+        .log{
+            margin-top:15px;
+            background:#eef2f6;
+            padding:12px;
+            border-radius:6px;
+            max-height:300px;
+            overflow-y:auto;
+            border: 1px solid #d1d5db;
+            font-size: 13px;
+            word-break: break-word;
+            color: var(--muted);
+        }
+        .log div { margin-bottom: 4px; }
+
+        /* Mission Tracker */
+        .mission-tracker {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #d1d5db;
+        }
+        .mission-slot {
+            text-align: center;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+        .mission-slot span {
+            display: block;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin: 8px auto 0;
+            background: #eef2f6;
+            border: 3px solid var(--muted);
+            box-shadow: inset 0 0 3px rgba(0,0,0,0.1);
+        }
+        .mission-slot.done {
+            opacity: 1;
+        }
+        .mission-slot.success span {
+            background: var(--success);
+            border-color: var(--success);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        .mission-slot.fail span {
+            background: var(--fail);
+            border-color: var(--fail);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+
+        /* ---------------------------------- */
+        /* 3. Central Modal Notification */
+        /* ---------------------------------- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        /* Generic Modal Styles (for game messages, voting, etc) */
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-title {
+            font-size: 40px;
+            font-weight: 800; /* Adjusted font weight for Prompt */
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            color: var(--text-dark);
+        }
+        .modal-message {
+            font-size: 20px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+        /* Modal Colors (High Impact) */
+        .modal-content.success { border-color: var(--success); }
+        .modal-content.success .modal-title { color: var(--success); text-shadow: none; }
+        .modal-content.fail { border-color: var(--fail); }
+        .modal-content.fail .modal-title { color: var(--fail); text-shadow: none; }
+        .modal-content.info { border-color: var(--accent-blue); }
+        .modal-content.info .modal-title { color: var(--accent-blue); }
+        .modal-content.player-turn { border-color: var(--accent-blue-light); }
+        .modal-content.player-turn .modal-title { color: var(--text-dark); }
+        .modal-content.player-turn .modal-message { color: var(--accent-blue); font-size: 22px; font-weight: 600; }
+
+
+        /* Mobile Tweaks */
+        @media (max-width:900px){
+            .game-area{grid-template-columns:1fr}
+            .players-list{justify-content: space-between;}
+            .player-input{flex-basis: 100%;}
+            .panel-right{order:2}
+            .modal-content, .role-modal-content { min-width: 90%; padding: 30px; }
+            .modal-title { font-size: 30px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="central-modal" class="modal-overlay">
+        <div id="modal-container" class="modal-content">
+            <div id="modal-title" class="modal-title"></div>
+            <div id="modal-message" class="modal-message"></div>
+            <button class="btn" id="modal-dismiss" style="margin-top:20px; min-width: 180px;">ดำเนินการต่อ</button>
+        </div>
+    </div>
+
+    <div id="role-reveal-modal" class="modal-overlay">
+        <div id="reveal-content" class="role-modal-content">
+            <div class="role-title">บทบาทของคุณคือ</div>
+            <div id="revealRoleModal" class="role-name"></div>
+            <div id="revealNameModal" style="font-weight:700; font-size: 24px; margin-bottom: 10px; color: var(--text-dark);"></div>
+            <div class="role-desc" id="revealDescModal"></div>
+            <button class="btn" id="role-modal-next" style="margin-top:20px; min-width: 250px;">ซ่อนบทบาท & ส่งเครื่องต่อ</button>
+        </div>
+    </div>
+    
+    <div class="wrap">
+        <header>
+            <h1>AVALON</h1>
+            <div>
+                <div style="font-size:20px;font-weight: 700; color: var(--text-dark);">คนเมาห้ามเล่น</div>
+                <div style="color:var(--muted);font-size:14px">บอร์ดเกมสร้างโดยนาธารสุดหล่อ</div>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="card panel">
+                <label>จำนวนผู้เล่น</label>
+                <div class="row">
+                    <select id="playerCount">
+                        <option value="5">5 Players</option>
+                        <option value="6">6 Players</option>
+                        <option value="7">7 Players</option>
+                        <option value="8">8 Players</option>
+                        <option value="9">9 Players</option>
+                        <option value="10">10 Players</option>
+                    </select>
+                    <button class="btn ghost" id="setNames">สร้างชื่อ</button>
+                </div>
+
+                <label style="margin-top:20px">ชื่อผู้เล่น</label>
+                <div class="players-list" id="playersInputs"></div>
+
+                <div style="margin-top:20px;display:flex;gap:8px">
+                    <button class="btn" id="startGame">เริ่มเกม</button>
+                    <button class="btn ghost" id="reset">รีเซ็ต</button>
+                </div>
+            </div>
+
+            <div class="card panel" style="flex:1.5;">
+                <label>สรุปสถานการณ์ปัจจุบัน</label>
+                <div class="status-card" id="statusCard">
+                    <div class="status-text" id="statusText">เตรียมพร้อม: เลือกผู้เล่น</div>
+                    <div style="margin-top:10px;color:var(--muted);font-size:14px" id="playersSummary">เกมยังไม่เริ่มต้น</div>
+                    <div class="mission-tracker" id="missionTracker"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div>
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;align-items:center; border-bottom: 1px solid #d1d5db; padding-bottom: 15px;">
+                        <div>
+                            <strong style="font-size: 18px;">กระดานเกม</strong>
+                            <div style="font-size:13px;color:var(--muted)">ขั้นตอน: เสนอทีม → โหวต → ภารกิจ</div>
+                        </div>
+                        <div id="roundInfo" style="font-size:16px;font-weight: 700; color:var(--accent-blue)">รอบ: -</div>
+                    </div>
+
+                    <div style="margin-top:18px">
+                        <div style="font-size:14px;color:var(--text-dark); margin-bottom: 8px; font-weight: 600;">ผู้เล่นทั้งหมด:</div>
+                        <div class="players-grid" id="playersGrid"></div>
+                    </div>
+                    
+                    <div style="margin-top:25px">
+                        <div style="display:flex;gap:8px;align-items:center">
+                            <div style="font-size:15px;color:var(--muted); font-weight: 500;">ผู้นำปัจจุบัน:</div>
+                            <div id="currentLeader" style="font-weight:700; color: var(--text-dark); font-size: 18px;">-</div>
+                        </div>
+
+                        <div style="margin-top:10px;display:flex;gap:10px">
+                            <button class="btn" id="proposeTeam" disabled>เริ่มเสนอทีม</button>
+                            <button class="btn ghost" id="clearSelection" disabled>ยกเลิกการเลือก</button>
+                        </div>
+                    </div>
+
+                    <div id="proposeArea" style="margin-top:20px;display:none">
+                        <div style="font-size:14px;color:var(--text-dark); font-weight: 600;">เลือกผู้เล่นสำหรับทีมภารกิจ: (<span id="teamSizeText">0</span> คน)</div>
+                        <div class="players-grid" id="proposalGrid" style="margin-top:10px"></div>
+                        <div style="margin-top:15px">
+                            <button class="btn" id="submitProposal">ส่งทีมเข้าโหวต</button>
+                        </div>
+                    </div>
+
+                    <div id="votingArea" style="margin-top:20px;display:none">
+                        <div style="font-size:14px;color:var(--text-dark); font-weight: 600;">การโหวตทีม (ส่วนตัว)</div>
+                        <div style="margin-top:10px; padding: 15px; border: 1px dashed var(--muted); border-radius: 8px; background: #f0f4f7;">
+                            <div id="votePrompt" style="font-weight:700; font-size: 18px;">ผู้เล่น: -</div>
+                            <div style="display:flex;gap:10px;margin-top:12px">
+                                <button class="btn" style="background-color: var(--success); min-width: 150px;" id="voteYes">VOTE: ผ่าน</button>
+                                <button class="btn ghost" style="color: var(--fail); border-color: var(--fail); min-width: 150px;" id="voteNo">VOTE: ไม่ผ่าน</button>
+                            </div>
+                        </div>
+                        <div class="log" id="voteLog"></div>
+                    </div>
+
+                    <div id="missionArea" style="margin-top:20px;display:none">
+                        <div style="font-size:14px;color:var(--text-dark); font-weight: 600;">ลงคะแนนภารกิจ (ส่วนตัว)</div>
+                        <div style="margin-top:10px; padding: 15px; border: 1px dashed var(--muted); border-radius: 8px; background: #f0f4f7;">
+                            <div style="font-weight:700; font-size: 18px;" id="missionPrompt">ทีม: -</div>
+                            <div style="margin-top:12px" id="missionChoices"></div>
+                        </div>
+                        <div class="log" id="missionLog"></div>
+                    </div>
+
+                    <div id="resultArea" style="margin-top:18px"></div>
+                </div>
+            </div>
+
+            <div class="panel-right">
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;align-items:center; border-bottom: 1px solid #d1d5db; padding-bottom: 15px;">
+                        <div style="font-size: 18px; font-weight: 700; color: var(--text-dark);">เปิดเผยบทบาทลับ</div>
+                        <div style="font-size:13px;color:var(--muted)">ส่งเครื่องต่อให้เพื่อนทีละคน</div>
+                    </div>
+                    
+                    <div class="status-card" style="margin-top:15px; border-color: var(--accent-blue); padding: 15px; background: #f0f4f7;">
+                        <div id="revealArea" style="text-align: center;">
+                            <div style="text-align:center;color:var(--muted)" id="revealIntro">กดเริ่มเกมเพื่อสุ่มบทบาท</div>
+                            
+                            <div style="margin-top:15px; display: flex; justify-content: center;">
+                                <button class="btn" id="openRole" disabled>เปิดบทบาท</button>
+                            </div>
+
+                            <div id="nextPlayerStatus" style="margin-top:15px; font-weight: 600; color: var(--accent-blue); display: none;">
+                                ผู้เล่นคนถัดไป: <span id="nextPlayerNameDisplay"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px">
+                        <label>บันทึกเหตุการณ์ (Game Log)</label>
+                        <div class="log" id="gameLog"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div style="margin-top:30px; text-align: center; color: var(--muted); font-size: 12px;">Avalon Offline Game UI Redesign (Light Mode & Modal Flow Theme)</div>
+        </footer>
+    </div>
+
+    <script>
+        // --- Data models & helpers (Code logic remains unchanged) ---
+        const rolesDef = {GOOD:'คนดี', EVIL:'คนร้าย', SEER:'ผู้หยั่งรู้', ASSASSIN:'นักฆ่า'};
+
+        const teamSizeTable = {
+            5:[2,3,2,3,3], 6:[2,3,4,3,4], 7:[2,3,3,4,4], 8:[3,4,4,5,5], 9:[3,4,4,5,5], 10:[3,4,4,5,5]
+        };
+        const roleCounts = {5:{G:3,E:2},6:{G:4,E:2},7:{G:4,E:3},8:{G:5,E:3},9:{G:6,E:3},10:{G:6,E:4}};
+
+        let players = []; // {name, role, id}
+        let playerCount = 5;
+
+        // game state
+        let game = {started:false, leaderIndex:0, round:0, proposal:[], proposalHistory:[], voteResults:[], missionResults:[], rejectedCount:0, revealIndex:0, proposalAccepted:false, phase:'setup'};
+
+        // --- UI elements ---
+        const playerCountEl = document.getElementById('playerCount');
+        const playersInputs = document.getElementById('playersInputs');
+        const setNamesBtn = document.getElementById('setNames');
+        const startBtn = document.getElementById('startGame');
+        const resetBtn = document.getElementById('reset');
+        const statusText = document.getElementById('statusText');
+        const playersSummary = document.getElementById('playersSummary');
+        const revealIntro = document.getElementById('revealIntro');
+        const openRoleBtn = document.getElementById('openRole');
+        const playersGrid = document.getElementById('playersGrid');
+        const currentLeader = document.getElementById('currentLeader');
+        const proposeTeamBtn = document.getElementById('proposeTeam');
+        const proposeArea = document.getElementById('proposeArea');
+        const proposalGrid = document.getElementById('proposalGrid');
+        const submitProposalBtn = document.getElementById('submitProposal');
+        const clearSelectionBtn = document.getElementById('clearSelection');
+        const voteArea = document.getElementById('votingArea');
+        const votePrompt = document.getElementById('votePrompt');
+        const voteLog = document.getElementById('voteLog');
+        const voteLogGlobal = document.getElementById('gameLog');
+        const missionArea = document.getElementById('missionArea');
+        const missionPrompt = document.getElementById('missionPrompt');
+        const missionChoices = document.getElementById('missionChoices');
+        const roundInfo = document.getElementById('roundInfo');
+        const missionTracker = document.getElementById('missionTracker');
+        const teamSizeText = document.getElementById('teamSizeText');
+        
+        // Modal Elements (Central Notification)
+        const centralModal = document.getElementById('central-modal');
+        const modalContainer = document.getElementById('modal-container');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalDismissBtn = document.getElementById('modal-dismiss');
+
+        // Role Reveal Modal Elements
+        const roleRevealModal = document.getElementById('role-reveal-modal');
+        const revealContent = document.getElementById('reveal-content');
+        const revealNameModal = document.getElementById('revealNameModal');
+        const revealRoleModal = document.getElementById('revealRoleModal');
+        const revealDescModal = document.getElementById('revealDescModal');
+        const roleModalNextBtn = document.getElementById('role-modal-next');
+        const nextPlayerStatus = document.getElementById('nextPlayerStatus');
+        const nextPlayerNameDisplay = document.getElementById('nextPlayerNameDisplay');
+
+        // Close modal listener (for generic modal)
+        modalDismissBtn.addEventListener('click', () => {
+             centralModal.classList.remove('active');
+        });
+
+        // --------------------------
+        // Central Modal Notification (Enhanced for Player Change)
+        // --------------------------
+        function showCentralModal(title, message, type = 'info', playerTurn = null) {
+            let actualType = type;
+            if (playerTurn) {
+                actualType = 'player-turn';
+                message = `กรุณาส่งเครื่องต่อให้ **${playerTurn}** เพื่อดำเนินการต่อ`;
+            }
+
+            modalContainer.className = `modal-content ${actualType}`;
+            modalTitle.textContent = title;
+            modalMessage.innerHTML = message; // Use innerHTML to allow for strong tags
+            centralModal.classList.add('active');
+            
+            // Auto dismiss only for success/fail/end game
+            const isCritical = (type.includes('success') || type.includes('fail') || title.includes('จบเกม'));
+            
+            if (isCritical) {
+                 modalDismissBtn.style.display = 'inline-block';
+                 setTimeout(() => centralModal.classList.remove('active'), 5000);
+            } else {
+                 modalDismissBtn.style.display = 'inline-block';
+            }
+        }
+
+        // Mission Tracker
+        function renderMissionTracker() {
+            missionTracker.innerHTML = '';
+            const teamSizes = teamSizeTable[playerCount];
+            if (!teamSizes) return;
+
+            for (let i = 0; i < 5; i++) {
+                const slot = document.createElement('div');
+                const result = game.missionResults[i];
+                const rejectedCountText = (game.round === i + 1 && game.phase === 'propose' && game.rejectedCount > 0) ? ` (ถูกปฏิเสธ: ${game.rejectedCount})` : '';
+
+                slot.className = 'mission-slot';
+                slot.innerHTML = `M${i + 1} (${teamSizes[i]})<span></span>${rejectedCountText}`;
+
+                if (result) {
+                    slot.classList.add('done');
+                    slot.classList.add(result.missionFailed ? 'fail' : 'success');
+                    slot.title = result.missionFailed ? `ล้มเหลว: ${result.failed} Fail(s)` : 'สำเร็จ';
+                }
+                missionTracker.appendChild(slot);
+            }
+        }
+
+        // init functions
+        function makeNameInputs(){
+            playersInputs.innerHTML = '';
+            playerCount = parseInt(playerCountEl.value);
+            for(let i=0;i<playerCount;i++){
+                const div = document.createElement('div'); div.className='player-input';
+                const inp = document.createElement('input'); inp.type='text'; inp.placeholder='Player '+(i+1); inp.value=''; inp.dataset.idx=i;
+                div.appendChild(inp);
+                playersInputs.appendChild(div);
+            }
+        }
+
+        playerCountEl.addEventListener('change', makeNameInputs);
+        setNamesBtn.addEventListener('click', ()=>{
+            makeNameInputs();
+            const inputs = playersInputs.querySelectorAll('input');
+            inputs.forEach((el,i)=>el.value = 'ผู้เล่น '+(i+1));
+        });
+        resetBtn.addEventListener('click', ()=>location.reload());
+
+        makeNameInputs();
+
+        // --- role assign ---
+        function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+        function startGame(){
+            const inputs = playersInputs.querySelectorAll('input');
+            players = [];
+            for(let i=0;i<inputs.length;i++){
+                const name = inputs[i].value.trim() || ('ผู้เล่น '+(i+1));
+                players.push({id:i,name,role:null});
+            }
+            playerCount = players.length;
+            
+            const counts = roleCounts[playerCount];
+            if(!counts) { showCentralModal('ข้อผิดพลาด!', 'จำนวนผู้เล่นไม่ถูกต้อง', 'fail'); return; }
+
+            let rolesPool = [];
+            rolesPool.push(rolesDef.SEER); for(let i=0;i<counts.G-1;i++) rolesPool.push(rolesDef.GOOD);
+            rolesPool.push(rolesDef.ASSASSIN); for(let i=0;i<counts.E-1;i++) rolesPool.push(rolesDef.EVIL);
+            shuffle(rolesPool);
+            players.forEach((p,i)=>p.role=rolesPool[i]);
+
+            game.started=true; game.leaderIndex=0; game.round=0; game.revealIndex=0; game.proposal=[]; game.proposalHistory=[]; game.voteResults=[]; game.missionResults=[]; game.rejectedCount=0; game.phase='reveal';
+            updateStatus(); renderPlayersGrid(); setupRevealArea(); 
+            log(`เกมเริ่ม: ผู้เล่น ${playerCount} คน`);
+            
+            // MODAL for start game (no player turn, just info)
+            showCentralModal('เกมเริ่มต้น!', `สุ่มบทบาทเรียบร้อย! ส่งเครื่องต่อให้ **${players[0].name}** เพื่อเริ่มเปิดบทบาท`, 'info');
+            openRoleBtn.disabled = false;
+        }
+
+        startBtn.addEventListener('click', startGame);
+
+        function updateStatus(){
+            const teamSize = game.round > 0 ? teamSizeTable[playerCount][game.round-1] : 0;
+            let status = 'ยังไม่เริ่มเกม';
+            if (game.started) {
+                if (game.phase === 'ended') status = 'จบเกมแล้ว!';
+                else if (game.phase === 'reveal') status = 'เปิดเผยบทบาท...';
+                else if (game.phase === 'propose') status = 'ผู้นำเสนอทีม';
+                else if (game.phase === 'voting') status = 'กำลังโหวตทีม';
+                else if (game.phase === 'mission') status = 'กำลังทำภารกิจ';
+            }
+
+            statusText.textContent = status;
+            playersSummary.textContent = game.started ? `ผู้เล่น ${playerCount} คน — ผู้นำ: ${players[game.leaderIndex].name}` : 'เลือกจำนวนผู้เล่นเพื่อเริ่มเกม';
+            roundInfo.textContent = game.round>0 ? `ภารกิจ ${game.round} / 5 (ทีม ${teamSize} คน) - ปฏิเสธ: ${game.rejectedCount}/5` : 'รอบ: -';
+            currentLeader.textContent = game.started ? players[game.leaderIndex].name : '-';
+            teamSizeText.textContent = teamSize;
+            renderMissionTracker();
+
+            proposeTeamBtn.disabled = game.phase !== 'propose';
+            clearSelectionBtn.disabled = game.phase !== 'propose';
+            const proposalSize = currentProposal ? currentProposal.size : 0;
+            submitProposalBtn.disabled = game.phase !== 'propose' || proposalSize !== teamSize;
+        }
+
+        function renderPlayersGrid(){
+            playersGrid.innerHTML='';
+            players.forEach(p=>{
+                const el = document.createElement('div'); el.className='pill'; el.id='player-'+p.id; el.textContent=p.name; if(players.indexOf(p)===game.leaderIndex) el.classList.add('leader');
+                el.addEventListener('click', ()=>{ if(game.phase==='propose') toggleProposal(p.id); });
+                playersGrid.appendChild(el);
+            });
+            updateStatus();
+        }
+
+        // --- reveal flow ---
+        function setupRevealArea(){
+            revealIntro.style.display='block';
+            nextPlayerStatus.style.display='none';
+            // อัปเดตชื่อผู้เล่นคนแรกที่ต้องเปิดบทบาท
+            if (players.length > 0) {
+                 nextPlayerNameDisplay.textContent = players[0].name;
+            }
+            game.revealIndex = 0;
+            openRoleBtn.disabled=false;
+        }
+        
+        // ฟังก์ชันสำหรับเปิด Modal บทบาท
+        function openRoleModal() {
+            const idx = game.revealIndex; 
+            const p = players[idx];
+            const roleIsGood = p.role === rolesDef.GOOD || p.role === rolesDef.SEER;
+            const isEvil = p.role === rolesDef.EVIL || p.role === rolesDef.ASSASSIN;
+        
+            revealContent.classList.remove('role-good', 'role-evil'); 
+            revealContent.classList.add(roleIsGood ? 'role-good' : 'role-evil');
+            
+            revealNameModal.textContent = p.name; 
+            revealRoleModal.textContent = p.role; 
+            
+            let extraInfo = '';
+            
+            if (isEvil) {
+                const otherEvils = players.filter(pl => 
+                    (pl.role === rolesDef.EVIL || pl.role === rolesDef.ASSASSIN) && pl.id !== p.id
+                ).map(pl => pl.name);
+                if (otherEvils.length > 0) {
+                    extraInfo = `<div class="secret-info evil">**เพื่อนร่วมทีมคนร้าย**: ${otherEvils.join(', ')}</div>`;
+                } else {
+                        extraInfo = `<div class="secret-info evil">**คุณเป็นคนร้ายคนเดียว!**</div>`;
+                }
+
+            } else if (p.role === rolesDef.SEER) {
+                const allEvils = players.filter(pl => 
+                    pl.role === rolesDef.EVIL || pl.role === rolesDef.ASSASSIN
+                ).map(pl => pl.name);
+                extraInfo = `<div class="secret-info good">**คนร้ายที่คุณเห็น**: ${allEvils.join(', ')}</div>`;
+            }
+
+            revealDescModal.innerHTML = roleDescription(p.role) + extraInfo;
+            
+            // แสดง Modal บทบาท
+            roleRevealModal.classList.add('active');
+            log(`เปิดบทบาทของ ${p.name}`);
+        }
+        
+        // ฟังก์ชันสำหรับจัดการการส่งเครื่องต่อหลังจากดูบทบาท
+        function moveNextReveal() {
+            roleRevealModal.classList.remove('active'); // ปิด Modal บทบาท
+
+            game.revealIndex++;
+            if(game.revealIndex>=players.length){
+                // ผู้เล่นคนสุดท้ายดูบทบาทจบแล้ว -> เริ่มเกม
+                
+                game.phase='propose'; 
+                game.round=1; 
+                updateStatus(); 
+                renderPlayersGrid(); 
+                log('การเปิดบทบาทเสร็จสิ้น — เริ่มเสนอทีม');
+                
+                // ซ่อนปุ่มเปิดบทบาทเมื่อเริ่มเกมแล้ว
+                openRoleBtn.style.display = 'none';
+                revealIntro.style.display = 'none';
+                nextPlayerStatus.style.display = 'none';
+
+                renderProposalUI();
+                showCentralModal('เริ่มภารกิจที่ 1', 'ผู้นำคนแรกพร้อมเสนอทีม!', 'info', players[game.leaderIndex].name);
+                return;
+            }
+            
+            // เตรียมผู้เล่นคนถัดไป
+            const previousPlayerName = players[game.revealIndex - 1].name;
+            const nextPlayerName = players[game.revealIndex].name;
+
+            // อัปเดต UI ให้พร้อมสำหรับผู้เล่นถัดไป
+            openRoleBtn.disabled = false;
+            nextPlayerNameDisplay.textContent = nextPlayerName;
+            revealIntro.style.display = 'none';
+            nextPlayerStatus.style.display = 'block';
+
+            // Modal แจ้งเตือนการส่งเครื่อง
+            showCentralModal('ตาถัดไป!', `คุณ ${previousPlayerName} ปิดหน้าจอแล้ว`, 'info', nextPlayerName);
+        }
+
+        openRoleBtn.addEventListener('click', openRoleModal);
+        roleModalNextBtn.addEventListener('click', moveNextReveal);
+
+        function roleDescription(r){
+            if(r===rolesDef.GOOD) return 'คนดี: โหวตภารกิจได้เพียง ผ่าน (ไม่สามารถเลือกไม่ผ่าน)';
+            if(r===rolesDef.EVIL) return 'คนร้าย: สามารถโหวตผ่านหรือไม่ผ่านได้ และสามารถลงคะแนน Fail ในภารกิจ';
+            if(r===rolesDef.SEER) return 'ผู้หยั่งรู้: อยู่ฝ่ายคนดี - คุณรู้ว่าใครคือคนร้าย';
+            if(r===rolesDef.ASSASSIN) return 'นักฆ่า: อยู่ฝ่ายคนร้าย - คุณรู้ว่าใครคือคนร้าย และมีสิทธิ์ฆ่าผู้เล่นหลังคนดีชนะ';
+            return '';
+        }
+
+        // --- proposal & voting ---
+        let currentProposal = new Set();
+
+        function renderProposalUI(){
+            proposeArea.style.display='block'; proposalGrid.innerHTML=''; currentProposal = new Set();
+            const teamSize = teamSizeTable[playerCount][game.round-1];
+            players.forEach(p=>{
+                const pill = document.createElement('div'); pill.className='pill'; pill.textContent=p.name; pill.id='prop-'+p.id; pill.addEventListener('click', ()=>{ toggleProposal(p.id); });
+                proposalGrid.appendChild(pill);
+            });
+            updateStatus();
+        }
+
+        function toggleProposal(id){
+            if(game.phase!=='propose') return;
+            const teamSize = teamSizeTable[playerCount][game.round-1];
+            const el = document.getElementById('prop-'+id);
+            if(currentProposal.has(id)){ 
+                currentProposal.delete(id); 
+                el.classList.remove('selected'); 
+            } else { 
+                if(currentProposal.size<teamSize){ 
+                    currentProposal.add(id); 
+                    el.classList.add('selected'); 
+                } 
+            }
+            updateStatus();
+        }
+
+        clearSelectionBtn.addEventListener('click', ()=>{currentProposal=new Set(); Array.from(proposalGrid.children).forEach(c=>c.classList.remove('selected')); updateStatus();});
+
+        submitProposalBtn.addEventListener('click', ()=>{
+            const teamSize = teamSizeTable[playerCount][game.round-1];
+            if(currentProposal.size!==teamSize){showCentralModal('เลือกทีมไม่ครบ!', `กรุณาเลือกผู้เล่นให้ครบ ${teamSize} คน`, 'info');return}
+            game.proposal = Array.from(currentProposal);
+            game.phase='voting'; proposeArea.style.display='none'; voteArea.style.display='block'; voteLog.innerHTML=''; game.votesNeeded = playerCount; game.votesCollected = 0; game.voteBuffer = [];
+            
+            log(`เสนอทีม: ${game.proposal.map(i=>players[i].name).join(', ')}`);
+            
+            // MODAL for start voting
+            const firstVoter = players[game.votesCollected].name;
+            votePrompt.textContent = `ผู้เล่น: ${firstVoter} (โหวตเป็นการส่วนตัว)`; 
+            showCentralModal('เริ่มโหวตทีม!', `ผู้นำ ${players[game.leaderIndex].name} เสนอทีมแล้ว`, 'info', firstVoter);
+            updateStatus();
+        });
+
+        // voting — single-device private sequential votes
+        document.getElementById('voteYes').addEventListener('click', ()=>castVote(true));
+        document.getElementById('voteNo').addEventListener('click', ()=>castVote(false));
+
+        function castVote(choice){
+            // Ensure modal is closed before casting vote
+            if (centralModal.classList.contains('active')) {
+                showCentralModal('โปรดดำเนินการต่อ!', 'กรุณากด "ดำเนินการต่อ" เพื่อปิดการแจ้งเตือน', 'info');
+                return;
+            }
+            
+            const voterIdx = game.votesCollected; const voter = players[voterIdx];
+            game.voteBuffer.push({voter:voter.name, choice}); game.votesCollected++;
+            
+            if(game.votesCollected<playerCount){ 
+                voteLog.innerHTML = `โหวตแล้ว: ${game.votesCollected}/${playerCount}`;
+                const nextVoter = players[game.votesCollected].name;
+                votePrompt.textContent = `ผู้เล่น: ${nextVoter} (โหวตเป็นการส่วนตัว)`; 
+                
+                // MODAL for next voter
+                showCentralModal('ตาโหวตถัดไป', `คุณ ${voter.name} โหวตเสร็จแล้ว`, 'info', nextVoter);
+
+            } else { // reveal votes
+                const yes = game.voteBuffer.filter(v=>v.choice).length; const no = playerCount - yes;
+                voteLog.innerHTML = `ผลโหวต: ผ่าน ${yes} — ไม่ผ่าน ${no}`;
+                log(`โหวตทีม: ผ่าน ${yes} / ไม่ผ่าน ${no}`);
+                
+                // decide
+                if(yes>no){ // accepted
+                    game.proposalAccepted=true; game.rejectedCount=0; game.phase='mission'; voteArea.style.display='none'; missionArea.style.display='block'; prepareMission();
+                    // MODAL for accepted team
+                    showCentralModal('ทีมถูกรับรอง!', `ทีมได้รับคะแนน **${yes} ผ่าน** และ **${no} ไม่ผ่าน**`, 'success', players[game.proposal[0]].name);
+                } else { // rejected
+                    game.proposalAccepted=false; game.rejectedCount++; game.leaderIndex = (game.leaderIndex+1)%playerCount; game.phase='propose'; voteArea.style.display='none'; renderPlayersGrid();
+                    game.votesCollected=0; game.voteBuffer=[]; game.proposal=[]; 
+                    
+                    if(game.rejectedCount>=5){ // 5 rejections -> evil wins
+                        showCentralModal('คนร้ายชนะอัตโนมัติ!', `โหวตถูกปฏิเสธ 5 ครั้ง!`, 'fail');
+                        endGame('evil_auto'); return;
+                    }
+                    
+                    log(`เสนอทีมถูกปฏิเสธ (${game.rejectedCount}/5)`);
+                    // MODAL for rejected team
+                    showCentralModal('โหวตไม่ผ่าน!', `ทีมถูกปฏิเสธ (${game.rejectedCount}/5) ผู้นำเปลี่ยนคน`, 'fail', players[game.leaderIndex].name);
+                    renderProposalUI();
+                }
+                updateStatus();
+            }
+        }
+
+        // --- mission execution ---
+        function prepareMission(){
+            missionLog.innerHTML='';
+            const teamNames = game.proposal.map(i=>players[i].name);
+            missionPrompt.textContent = 'ทีม: '+teamNames.join(', ');
+            game.missionVoteBuffer = [];
+            missionArea.style.display='block';
+            showMissionChoiceForIndex(0);
+            updateStatus();
+        }
+
+        function showMissionChoiceForIndex(k){
+            if(k>=game.proposal.length) return finalizeMission();
+
+            // Check if this is the start of a new mission phase (k=0) 
+            // OR if a player is finishing their turn (k>0) and modal is not yet closed
+            if (k > 0 && centralModal.classList.contains('active')) {
+                 showCentralModal('ตาถัดไป!', `คุณ **${game.missionVoteBuffer[k-1].player}** ลงคะแนนเสร็จแล้ว`, 'info', players[game.proposal[k]].name);
+            }
+            // Logic for k=0 is handled by the Modal from submitProposalBtn click
+            
+            const playerIdx = game.proposal[k]; const p = players[playerIdx];
+            
+            missionChoices.innerHTML = `<div style="font-weight:700">ผู้เล่นปัจจุบัน: ${p.name}</div>`;
+            
+            if(p.role===rolesDef.GOOD || p.role===rolesDef.SEER){
+                missionChoices.innerHTML += `<div style="margin-top:8px;color:var(--muted)">คุณเป็นคนดี: การเลือกจะเป็น **Success** อัตโนมัติ</div><div style="margin-top:8px"><button class='btn' id='autoSuccess'>ลงคะแนน Success</button></div>`;
+                document.getElementById('autoSuccess').addEventListener('click', ()=>{ 
+                    game.missionVoteBuffer.push({player:p.name, vote:'success'}); 
+                    showMissionChoiceForIndex(k+1); 
+                });
+            } else { // evil may choose
+                missionChoices.innerHTML += `<div style="margin-top:8px;color:var(--muted)">คุณเป็นคนร้าย: เลือก **Success** หรือ **Fail**</div><div style="display:flex;gap:10px;margin-top:12px"><button class='btn' id='mSuccess'>Success</button><button class='btn ghost' id='mFail'>Fail</button></div>`;
+                document.getElementById('mSuccess').addEventListener('click', ()=>{ 
+                    game.missionVoteBuffer.push({player:p.name, vote:'success'}); 
+                    showMissionChoiceForIndex(k+1); 
+                });
+                document.getElementById('mFail').addEventListener('click', ()=>{ 
+                    game.missionVoteBuffer.push({player:p.name, vote:'fail'}); 
+                    showMissionChoiceForIndex(k+1); 
+                });
+            }
+        }
+
+        function finalizeMission(){
+            missionChoices.innerHTML='';
+            const fails = game.missionVoteBuffer.filter(v=>v.vote==='fail').length;
+            
+            const needTwoFails = (playerCount>=7 && game.round===4);
+            const missionFailed = needTwoFails ? (fails>=2) : (fails>=1);
+            
+            missionLog.innerHTML = `ผลภารกิจ: Fail ${fails} → ${missionFailed? 'ล้มเหลว':'สำเร็จ'}`;
+            log(`ภารกิจ ${game.round}: Fail ${fails} → ${missionFailed? 'ล้มเหลว':'สำเร็จ'}`);
+            
+            game.missionResults.push({round:game.round, failed:fails, missionFailed});
+            missionArea.style.display='none';
+            
+            const succCount = game.missionResults.filter(m=>!m.missionFailed).length;
+            const failCount = game.missionResults.filter(m=>m.missionFailed).length;
+            
+            if (missionFailed) {
+                showCentralModal('ภารกิจล้มเหลว!', `รอบที่ ${game.round} ล้มเหลว! (Fail: ${fails} คะแนน)`, 'fail');
+            } else {
+                showCentralModal('ภารกิจสำเร็จ!', `รอบที่ ${game.round} สำเร็จ!`, 'success');
+            }
+
+            if(failCount>=3){ endGame('evil'); return; }
+            if(succCount>=3){ triggerAssassination(); return; }
+            
+            // else next round
+            game.round++; 
+            game.leaderIndex = (game.leaderIndex+1)%playerCount; 
+            game.phase='propose'; 
+            renderPlayersGrid(); 
+            renderProposalUI(); 
+            updateStatus();
+            
+            // MODAL for next round start
+            showCentralModal(`เริ่มภารกิจที่ ${game.round}`, 'ผู้นำคนใหม่พร้อมเสนอทีม', 'info', players[game.leaderIndex].name);
+        }
+
+        // --- assassination ---
+        function triggerAssassination(){
+            log('คนดีชนะภารกิจ — เข้าสู่ช่วงนักฆ่า (Assassination)');
+            const assassin = players.find(p=>p.role===rolesDef.ASSASSIN);
+            
+            // MODAL for assassination start
+            showCentralModal('คนดีชนะภารกิจ!', `นักฆ่า (**${assassin.name}**) โปรดปิดตาผู้เล่นอื่นทั้งหมดก่อนเลือกเป้าหมาย`, 'info');
+            
+            const target = prompt(`นักฆ่า (${assassin.name}): คนดีชนะ! พิมพ์ชื่อผู้เล่นที่คุณคิดว่าเป็นผู้หยั่งรู้เพื่อชิงชัยชนะ`);
+            
+            if(!target) { endGame('good'); return; }
+            const targetPlayer = players.find(p=>p.name===target);
+            if(!targetPlayer){ 
+                showCentralModal('ชื่อผิดพลาด!', 'ไม่พบชื่อผู้เล่นที่ระบุ', 'fail');
+                endGame('good'); 
+                return; 
+            }
+            log(`นักฆ่าเลือกสังหาร: ${targetPlayer.name} (บทบาท: ${targetPlayer.role})`);
+            
+            if(targetPlayer.role===rolesDef.SEER){ endGame('evil_assassin'); } else { endGame('good_assassin_fail'); }
+        }
+
+        // --- end game ---
+        function endGame(mode){
+            let text='';
+            let roster = players.map(p=>`${p.name} — ${p.role}`).join('\n');
+
+            if(mode.startsWith('evil')) {
+                text='ฝ่ายคนร้ายชนะ!';
+                showCentralModal('จบเกม: คนร้ายชนะ!', `ชัยชนะเป็นของเหล่าคนร้าย! บทบาท:\n${roster}`, 'fail');
+            }
+            else {
+                text='ฝ่ายคนดีชนะ!';
+                showCentralModal('จบเกม: คนดีชนะ!', `ความดีงามชนะแล้ว! บทบาท:\n${roster}`, 'success');
+            }
+            
+            log('เกมจบ: '+text);
+            
+            game.phase='ended'; updateStatus();
+        }
+
+        // --- helpers ---
+        function log(msg){ 
+            const g = voteLogGlobal; 
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `${new Date().toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit', second: '2-digit'})} — ${msg}`;
+            g.prepend(logEntry); 
+            g.scrollTop = 0; 
+        }
+
+        // initial render
+        updateStatus();
+    </script>
+</body>
+</html>
