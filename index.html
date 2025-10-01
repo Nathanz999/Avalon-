@@ -50,8 +50,16 @@
             transition: all 0.3s;
         }
         
+        /* ADJUSTED: Game area now uses a single column */
         .controls{display:flex;gap:30px;flex-wrap:wrap;margin-top:12px}
         .panel{flex:1;min-width:300px}
+        .game-area{
+            display: grid;
+            grid-template-columns: 1fr; /* Single column */
+            gap: 30px;
+            margin-top: 30px;
+        }
+
 
         label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px; font-weight: 600; text-transform: uppercase;}
         
@@ -143,8 +151,6 @@
         /* ---------------------------------- */
         /* 2. Game area & Grids */
         /* ---------------------------------- */
-        .game-area{display:grid;grid-template-columns:1fr 380px;gap:30px;margin-top:30px}
-        .players-grid{display:flex;flex-wrap:wrap;gap:10px}
         
         /* Player Pill Style - Clean Pill */
         .pill{
@@ -176,21 +182,8 @@
             border-color: var(--success);
         }
         
-        /* Log Style - History Scroll */
-        .log{
-            margin-top:15px;
-            background:#ffffff; /* White background for log */
-            padding:12px;
-            border-radius:8px;
-            max-height:300px;
-            overflow-y:auto;
-            border: 1px solid var(--border);
-            font-size: 13px;
-            word-break: break-word;
-            color: var(--muted);
-        }
-        .log div { margin-bottom: 4px; border-bottom: 1px dotted #e0e0e0; padding-bottom: 3px;}
-        .log div:last-child { border-bottom: none; }
+        /* Log Style (Removed, but keeping the class for structural integrity if needed later) */
+        /* .log{} */
 
         /* Mission Tracker - New Design */
         .mission-tracker {
@@ -311,10 +304,8 @@
 
         /* Mobile Tweaks */
         @media (max-width:900px){
-            .game-area{grid-template-columns:1fr}
             .players-list{justify-content: space-between;}
             .player-input{flex-basis: 100%;}
-            .panel-right{order:2}
             .modal-content, .role-modal-content { min-width: 90%; padding: 30px; }
             .modal-title { font-size: 30px; }
         }
@@ -399,7 +390,7 @@
 
         <div id="gameView" class="view">
             <div class="controls">
-                 <div class="card panel" style="flex:1.5;">
+                 <div class="card panel" style="flex:1;">
                     <label>สรุปสถานการณ์ปัจจุบัน</label>
                     <div class="status-card" id="statusCard">
                         <div class="status-text" id="statusText"><i class="fas fa-shield-alt"></i> ภารกิจที่ 1: เสนอทีม</div>
@@ -446,34 +437,21 @@
                             <div style="font-size:16px;color:var(--text-dark); font-weight: 700; border-bottom: 1px dashed var(--border); padding-bottom: 10px;"><i class="fas fa-hand-point-right"></i> การโหวตทีม (ส่วนตัว)</div>
                             <div style="margin-top:10px; padding: 18px; border: 1px dashed var(--accent-blue); border-radius: 8px; background: #f0f8ff;">
                                 <div id="votePrompt" style="font-weight:800; font-size: 20px; color: var(--text-dark);">ผู้เล่น: -</div>
+                                <div id="voteLog" style="margin-top:8px; color: var(--muted); font-size: 14px;">รอกาโหวต...</div>
                                 <div style="display:flex;gap:15px;margin-top:15px">
                                     <button class="btn" style="background-color: var(--success); min-width: 150px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);" id="voteYes"><i class="fas fa-thumbs-up"></i> VOTE: ผ่าน</button>
                                     <button class="btn ghost" style="color: var(--fail); border-color: var(--fail); min-width: 150px;" id="voteNo"><i class="fas fa-thumbs-down"></i> VOTE: ไม่ผ่าน</button>
                                 </div>
                             </div>
-                            <div class="log" id="voteLog"></div>
                         </div>
 
                         <div id="missionArea" style="margin-top:25px;display:none">
                             <div style="font-size:16px;color:var(--text-dark); font-weight: 700; border-bottom: 1px dashed var(--border); padding-bottom: 10px;"><i class="fas fa-bomb"></i> ลงคะแนนภารกิจ (ส่วนตัว)</div>
                             <div id="missionContent" style="margin-top:10px; padding: 18px; border: 1px dashed var(--fail); border-radius: 8px; background: #fff0f0;">
                                 <div style="font-weight:800; font-size: 20px; color: var(--text-dark);" id="missionPrompt">ทีม: -</div>
+                                <div id="missionLog" style="margin-top:8px; color: var(--muted); font-size: 14px;">รอกาลงคะแนนภารกิจ...</div>
                                 <div style="margin-top:15px" id="missionChoices"></div>
                             </div>
-                            <div class="log" id="missionLog"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-right">
-                    <div class="card">
-                        <div style="display:flex;justify-content:space-between;align-items:center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
-                            <div style="font-size: 18px; font-weight: 700; color: var(--text-dark);"><i class="fas fa-history"></i> บันทึกเหตุการณ์</div>
-                            <div style="font-size:13px;color:var(--muted)">Game Log</div>
-                        </div>
-                        
-                        <div style="margin-top:10px">
-                            <div class="log" id="gameLog"></div>
                         </div>
                     </div>
                 </div>
@@ -519,12 +497,12 @@
         const clearSelectionBtn = document.getElementById('clearSelection');
         const voteArea = document.getElementById('votingArea');
         const votePrompt = document.getElementById('votePrompt');
-        const voteLog = document.getElementById('voteLog');
-        const voteLogGlobal = document.getElementById('gameLog');
+        const voteLog = document.getElementById('voteLog'); // Retained for local status
         const missionArea = document.getElementById('missionArea');
         const missionContent = document.getElementById('missionContent'); 
         const missionPrompt = document.getElementById('missionPrompt');
         const missionChoices = document.getElementById('missionChoices');
+        const missionLog = document.getElementById('missionLog'); // Retained for local status
         const roundInfo = document.getElementById('roundInfo');
         const missionTracker = document.getElementById('missionTracker');
         const teamSizeText = document.getElementById('teamSizeText');
@@ -692,7 +670,6 @@
             showView('gameView'); 
             updateStatus(); 
             renderPlayersGrid(); 
-            log(`เกมเริ่ม: ผู้เล่น ${playerCount} คน`);
             
             // Start the Role Reveal flow
             setupRevealFlow(); 
@@ -796,7 +773,6 @@
             revealDescModal.innerHTML = roleDescription(p.role) + extraInfo;
             
             roleRevealModal.classList.add('active'); 
-            log(`เปิดบทบาทของ ${p.name}`);
         }
         
         function moveNextReveal() {
@@ -809,7 +785,6 @@
                 game.round=1; 
                 updateStatus(); 
                 renderPlayersGrid(); 
-                log('การเปิดบทบาทเสร็จสิ้น — เริ่มภารกิจที่ 1');
                 
                 // CRITICAL FIX: ต้องเรียก prepareProposePhase เพื่อให้ UI เสนอทีมปรากฏ
                 prepareProposePhase(); 
@@ -900,12 +875,10 @@
             
             game.votesCollected = 0; game.voteBuffer = [];
             
-            log(`ผู้นำ ${players[game.leaderIndex].name} เสนอทีม: ${game.proposal.map(i=>players[i].name).join(', ')}`);
-            
             // MODAL for start voting
             const firstVoter = players[game.votesCollected].name;
             votePrompt.textContent = `ผู้เล่น: ${firstVoter} (โหวตเป็นการส่วนตัว)`; 
-            voteLog.innerHTML = 'รอกาโหวต...';
+            voteLog.textContent = 'รอกาโหวต...';
             showCentralModal('เริ่มโหวตทีม!', `ทีมถูกเสนอแล้ว: ${game.proposal.map(i=>players[i].name).join(', ')}`, 'info', firstVoter);
             updateStatus();
         });
@@ -924,7 +897,7 @@
             game.voteBuffer.push({voter:voter.name, choice}); game.votesCollected++;
             
             if(game.votesCollected < playerCount){ 
-                voteLog.innerHTML = `โหวตแล้ว: ${game.votesCollected}/${playerCount}`;
+                voteLog.textContent = `โหวตแล้ว: ${game.votesCollected}/${playerCount}`;
                 const nextVoter = players[game.votesCollected].name;
                 votePrompt.textContent = `ผู้เล่น: ${nextVoter} (โหวตเป็นการส่วนตัว)`; 
                 
@@ -932,8 +905,7 @@
 
             } else { // Finalize Voting
                 const yes = game.voteBuffer.filter(v=>v.choice).length; const no = playerCount - yes;
-                voteLog.innerHTML = `★ ผลโหวต: ผ่าน **${yes}}** — ไม่ผ่าน **${no}**`;
-                log(`ผลโหวตทีม: ผ่าน ${yes} / ไม่ผ่าน ${no}`);
+                voteLog.textContent = `★ ผลโหวต: ผ่าน ${yes} — ไม่ผ่าน ${no}`;
                 
                 if(yes>no){ // Accepted
                     game.proposalAccepted=true; game.rejectedCount=0; game.phase='mission'; voteArea.style.display='none'; 
@@ -946,8 +918,6 @@
                     game.votesCollected=0; game.voteBuffer=[]; game.proposal=[]; 
                     
                     if(game.rejectedCount>=5){ endGame('evil_auto'); return; }
-                    
-                    log(`เสนอทีมถูกปฏิเสธ (${game.rejectedCount}/5)`);
                     
                     showCentralModal('โหวตไม่ผ่าน!', 
                                      `ทีมถูกปฏิเสธ (${game.rejectedCount}/5) ผู้นำเปลี่ยนคน`, 
@@ -962,16 +932,14 @@
 
         // --- Mission Execution ---
         function prepareMission(){
-            missionLog.innerHTML='รอกาลงคะแนนภารกิจ...';
+            missionLog.textContent='รอกาลงคะแนนภารกิจ...';
             const teamNames = game.proposal.map(i=>players[i].name);
             missionPrompt.textContent = 'ทีม: '+teamNames.join(', ');
             game.missionVoteBuffer = [];
             
-            // ********************************************************
-            // ส่วนที่แก้ไข: ดึงชื่อผู้เล่นคนแรกในทีมที่ถูกรับรองมาใช้
-            const firstMissionPlayerIndex = game.proposal[0]; // ดึง index ของคนแรกในทีม
-            const firstMissionPlayerName = players[firstMissionPlayerIndex].name; // ดึงชื่อ
-            // ********************************************************
+            // ดึงชื่อผู้เล่นคนแรกในทีมที่ถูกรับรองมาใช้
+            const firstMissionPlayerIndex = game.proposal[0]; 
+            const firstMissionPlayerName = players[firstMissionPlayerIndex].name; 
 
             // MODAL to initiate private mission voting
             showCentralModal('ทีมถูกรับรอง!', 
@@ -1007,7 +975,7 @@
             
             const handleVote = (voteType) => {
                 game.missionVoteBuffer.push({player:p.name, vote:voteType});
-                missionLog.innerHTML = `ลงคะแนนแล้ว: ${game.missionVoteBuffer.length}/${game.proposal.length}`;
+                missionLog.textContent = `ลงคะแนนแล้ว: ${game.missionVoteBuffer.length}/${game.proposal.length}`;
                 
                 if (game.missionVoteBuffer.length === game.proposal.length) {
                     finalizeMission();
@@ -1034,8 +1002,7 @@
             const needTwoFails = (playerCount>=7 && game.round===4);
             const missionFailed = needTwoFails ? (fails>=2) : (fails>=1);
             
-            missionLog.innerHTML = `★ ผลภารกิจ: Fail **${fails}** → ${missionFailed? 'ล้มเหลว':'สำเร็จ'} (${needTwoFails?'ต้องการ 2 Fail':'ต้องการ 1 Fail'})`;
-            log(`ภารกิจ ${game.round}: Fail ${fails} → ${missionFailed? 'ล้มเหลว':'สำเร็จ'}`);
+            missionLog.textContent = `★ ผลภารกิจ: Fail ${fails} → ${missionFailed? 'ล้มเหลว':'สำเร็จ'} (${needTwoFails?'ต้องการ 2 Fail':'ต้องการ 1 Fail'})`;
             
             game.missionResults.push({round:game.round, failed:fails, missionFailed});
             
@@ -1067,7 +1034,6 @@
 
         // --- Assassination ---
         function triggerAssassination(){
-            log('คนดีชนะภารกิจ — เข้าสู่ช่วงนักฆ่า (Assassination)');
             const assassin = players.find(p=>p.role.includes(rolesDef.ASSASSIN));
             
             showCentralModal('คนดีชนะภารกิจ!', 
@@ -1082,11 +1048,9 @@
                 if(!target) { endGame('good_assassin_fail'); return; }
                 const targetPlayer = players.find(p=>p.name===target);
                 if(!targetPlayer || targetPlayer.role.includes('คนร้าย')){ 
-                    log(`นักฆ่าเลือกสังหาร: ${target} (บทบาท: -) - เลือกพลาด`);
                     endGame('good_assassin_fail'); 
                     return; 
                 }
-                log(`นักฆ่าเลือกสังหาร: ${targetPlayer.name} (บทบาท: ${targetPlayer.role})`);
                 
                 if(targetPlayer.role.includes(rolesDef.SEER)){ endGame('evil_assassin'); } else { endGame('good_assassin_fail'); }
             };
@@ -1107,7 +1071,6 @@
                 text = mode === 'good_assassin_fail' ? 'นักฆ่าสังหารพลาด! คนดีชนะ!' : 'ภารกิจสำเร็จ 3 ครั้ง! คนดีชนะ!';
             }
 
-            log(`เกมจบ: ผู้ชนะคือ ${winnerFaction}!`);
             game.phase='ended'; 
             updateStatus();
 
@@ -1135,15 +1098,6 @@
             modalDismissBtn.onclick = () => { location.reload(); }; 
             
             centralModal.classList.add('active'); 
-        }
-
-        // --- Helpers ---
-        function log(msg){ 
-            const g = voteLogGlobal; 
-            const logEntry = document.createElement('div');
-            logEntry.innerHTML = `${new Date().toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit', second: '2-digit'})} — ${msg}`;
-            g.prepend(logEntry); 
-            g.scrollTop = 0; 
         }
 
         // initial render
