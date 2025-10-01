@@ -932,7 +932,7 @@
 
             } else { // Finalize Voting
                 const yes = game.voteBuffer.filter(v=>v.choice).length; const no = playerCount - yes;
-                voteLog.innerHTML = `★ ผลโหวต: ผ่าน **${yes}** — ไม่ผ่าน **${no}**`;
+                voteLog.innerHTML = `★ ผลโหวต: ผ่าน **${yes}}** — ไม่ผ่าน **${no}**`;
                 log(`ผลโหวตทีม: ผ่าน ${yes} / ไม่ผ่าน ${no}`);
                 
                 if(yes>no){ // Accepted
@@ -967,10 +967,16 @@
             missionPrompt.textContent = 'ทีม: '+teamNames.join(', ');
             game.missionVoteBuffer = [];
             
+            // ********************************************************
+            // ส่วนที่แก้ไข: ดึงชื่อผู้เล่นคนแรกในทีมที่ถูกรับรองมาใช้
+            const firstMissionPlayerIndex = game.proposal[0]; // ดึง index ของคนแรกในทีม
+            const firstMissionPlayerName = players[firstMissionPlayerIndex].name; // ดึงชื่อ
+            // ********************************************************
+
             // MODAL to initiate private mission voting
             showCentralModal('ทีมถูกรับรอง!', 
-                             `ทีมได้รับคะแนน **${game.voteBuffer.filter(v=>v.choice).length} ผ่าน**`, 
-                             'success', players[game.proposal[0]].name);
+                             `ทีมได้รับคะแนน **${game.voteBuffer.filter(v=>v.choice).length} ผ่าน**<br>กรุณาส่งเครื่องต่อให้ **${firstMissionPlayerName}** เพื่อเริ่มลงคะแนนภารกิจ`, 
+                             'success', firstMissionPlayerName);
             modalDismissBtn.onclick = missionDismissHandler; // Use special handler for sequential mission
             
             updateStatus();
@@ -1010,7 +1016,7 @@
                 }
             };
 
-            if(isGood){ // รวม Merlin และคนดีทั่วไป
+            if(isGood){ // รวม Merlin และคนดีทั่วไป (Merlin ถูกล็อกให้ Success เท่านั้น)
                 missionChoices.innerHTML += `<div style="margin-top:10px;color:var(--success);font-weight: 600;">คุณต้องลงคะแนน **Success** เท่านั้น</div><div style="margin-top:12px"><button class='btn' id='autoSuccess'><i class="fas fa-certificate"></i> ลงคะแนน Success</button></div>`;
                 document.getElementById('autoSuccess').addEventListener('click', ()=>handleVote('success'));
             } else { // Evil (รวมถึง Assassin)
